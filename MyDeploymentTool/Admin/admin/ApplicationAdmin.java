@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 import admin.admindatas.*;
+import common.Protocol;
 
 
-public class Application implements NetworkListener, GUIListener, ControlListener {
+public class ApplicationAdmin implements NetworkListener, GUIListener, ControlListener {
 
 	private CommandSession command;
 	private MessagesSession messages;
@@ -33,11 +35,14 @@ public class Application implements NetworkListener, GUIListener, ControlListene
 
 
 	public void start () {
+		Protocol.IPSERV=JOptionPane.showInputDialog("Adresse IP du serveur ?");
+		if (Protocol.IPSERV==null || Protocol.IPSERV.equals(""))
+			System.exit(0);
 		model = new Model ();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				GUI g = new GUI(Application.this, model);
+				GUI g = new GUI(ApplicationAdmin.this, model);
 				g.setVisible(true);
 				gui = g;
 			}
@@ -45,7 +50,7 @@ public class Application implements NetworkListener, GUIListener, ControlListene
 	}
 
 	public static void main(String[] args) {
-		new Application().start();
+		new ApplicationAdmin().start();
 	}
 
 	@Override
@@ -91,7 +96,8 @@ public class Application implements NetworkListener, GUIListener, ControlListene
 	@Override
 	public void requestInstall(String os, List<App> apps, List<Client> clients)
 	{
-		if (model.isConnected()) {
+		if (model.isConnected()) 
+		{
 			gui.loading();
 			int[] result=command.install(model.getName(),os,apps,clients);
 			if (result!=null)
@@ -104,7 +110,6 @@ public class Application implements NetworkListener, GUIListener, ControlListene
 				gui.stopLoading();
 				updateInfo("Installation échouée.");
 			}
-
 		} else {
 			updateInfo("Cette opération nécessite d'être connecté.");
 		}
@@ -120,17 +125,27 @@ public class Application implements NetworkListener, GUIListener, ControlListene
 	@Override
 	public void requestControl(Client client) {
 		if (model.isConnected()) {
+			gui.loading();
 			if (model.getControlFrame(client.getAddress())!=null)
+			{
+				gui.stopLoading();
 				updateInfo("Prise en main de "+client.getName()+" déjà en cours.");
+			}
 			else if (command.doControl(model.getName(), client.getAddress()))
 			{
 				model.getControlFrames().add(new ControlGUI(this, client));
 				model.getControlFrame(client.getAddress()).setVisible(true);
+				gui.stopLoading();
 				updateInfo("Prise en main de "+client.getName()+" réussie.");
 			}
 			else
+			{
+				gui.stopLoading();
 				updateInfo("Prise en main de "+client.getName()+" échouée.");
-		} else {
+			}
+		} 
+		else 
+		{
 			updateInfo("Cette opération nécessite d'être connecté.");
 		}
 	}
@@ -154,37 +169,6 @@ public class Application implements NetworkListener, GUIListener, ControlListene
 			command.stopControl(model.getName(), client.getAddress());
 			model.removeControlFrame(client.getAddress());
 			updateInfo("Prise en main de "+client.getName()+" arrêtée.");
-		} else {
-			updateInfo("Cette opération nécessite d'être connecté.");
-		}
-	}
-
-
-	@Override
-	public void takePicture(List<Client> clients) {
-		if (model.isConnected()) {
-			for (Client client : clients)
-			{
-				BufferedImage img=command.takePicture(model.getName(), client.getAddress());
-				if (img!=null)
-				{
-					int i=0;
-					File f=new File("C:/Users/vicle/Desktop/Photos/Photo"+i+".png");
-					while (f.exists())
-					{
-						i++;
-						f=new File("C:/Users/vicle/Desktop/Photos/Photo"+i+".png");
-					}
-					try {
-						ImageIO.write(img,"PNG",f);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					updateInfo("Photo de "+client.getName()+" effectuée.");
-				}
-				else
-					updateInfo("Photo de "+client.getName()+" échouée.");
-			}
 		} else {
 			updateInfo("Cette opération nécessite d'être connecté.");
 		}

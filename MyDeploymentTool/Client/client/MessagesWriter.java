@@ -24,10 +24,4 @@ public class MessagesWriter extends Writer {
 	public void ko() {
 		writeInt(Protocol.RP_KO);
 	}
-
-	public void photo(BufferedImage img) {
-		writeInt(Protocol.RP_PHOTO);
-		writeBufferedImage(img);
-	}
-
 }

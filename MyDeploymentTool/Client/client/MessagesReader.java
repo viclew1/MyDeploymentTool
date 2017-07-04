@@ -1,20 +1,21 @@
 package client;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import common.Protocol;
 import common.Reader;
 
 public class MessagesReader extends Reader {
 
-	public MessagesReader(InputStream inputStream) {
+	public MessagesReader(InputStream inputStream, NetworkListener listener) {
 		super(inputStream);
+		this.listener=listener;
 	}
 
-
+	private NetworkListener listener;
 	private boolean done;
 	private String admin;
 
@@ -24,19 +25,19 @@ public class MessagesReader extends Reader {
 		switch (type)
 		{
 		case Protocol.RP_FILE:
-			readFile("C:/Users/vicle/Desktop/destTest/");
+			readFile(Protocol.DEST_DIR);
 			done=true;
 			break;
 
 		case Protocol.RP_DIR:
-			readDir("C:/Users/vicle/Desktop/destTest/");
+			readDir(Protocol.DEST_DIR);
 			done=true;
 			break;
 
 		case Protocol.RQ_CONTROL:
 			admin=readString();
 			break;
-		
+
 		default:
 			break;
 		}
@@ -48,16 +49,35 @@ public class MessagesReader extends Reader {
 		String fileName=readString();
 		File f=new File(destFolder+fileName);
 		f.createNewFile();
-		FileOutputStream fos = null;
-		fos = new FileOutputStream(f);
-		BufferedOutputStream bos = new BufferedOutputStream(fos);
+		FileOutputStream fos = new FileOutputStream(f);
 
-		long nbBytes=readLong();
+		double totalSize=readLong();
+		int nbPacket=readInt();
+		double currentSize=0;
+		
+		double d;
+		if (totalSize!=0)
+		{
+			d=100/totalSize;
+		}
+		else
+		{
+			d=0;
+		}
 
-		for (int i=0;i<nbBytes;i++)
-			bos.write(readByte());
-
-		bos.close();
+		listener.updateDownload(0,fileName,false);
+	
+		byte[] data;
+		for (int i=0;i<nbPacket;i++)
+		{
+			data=readByteArray();
+			fos.write(data);
+			currentSize+=data.length;
+			listener.updateDownload((int)(currentSize*d), fileName, false);
+		}
+		
+		listener.updateDownload(0, fileName, true);
+		fos.close();
 	}
 
 	public void readDir(String destFolder) throws IOException
@@ -86,7 +106,7 @@ public class MessagesReader extends Reader {
 	public boolean getDone() {
 		return done;
 	}
-	
+
 	public String getAdmin() {
 		return admin;
 	}

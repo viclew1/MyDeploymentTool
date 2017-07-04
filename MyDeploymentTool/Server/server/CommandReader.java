@@ -68,10 +68,6 @@ public class CommandReader extends Reader{
 			name=readString();
 			dest=readString();
 			break;
-		case Protocol.RQ_PHOTO:
-			name=readString();
-			dest=readString();
-			break;
 		default:
 			break;
 		}

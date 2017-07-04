@@ -65,9 +65,6 @@ public class CommandSession extends Thread{
 			case Protocol.RP_CONTROL:
 				listener.sendCapture(connection.getInetAddress().getHostAddress(),reader.getName(), reader.getImg());
 				break;
-			case Protocol.RQ_PHOTO:
-				writer.writePhoto(listener.getPhotoFromClient(reader.getName(),reader.getDest()));
-				break;
 			case -1 : break;
 			default: return false;
 			}

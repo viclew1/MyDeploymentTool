@@ -33,7 +33,7 @@ public class MessagesSession extends Thread {
 	public boolean open () {
 		this.close();
 		try {
-			connection = new Socket(InetAddress.getLocalHost().getHostAddress(), Protocol.MESSAGE_PORT);
+			connection = new Socket(Protocol.IPSERV, Protocol.MESSAGE_PORT);
 			start ();
 			return true;
 		} catch (IOException e) {

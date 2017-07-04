@@ -5,7 +5,7 @@
  */
 package admin.admindatas;
 
-import static common.DiversesOperations.*;
+import static common.MDTUtils.*;
 
 /**
  *

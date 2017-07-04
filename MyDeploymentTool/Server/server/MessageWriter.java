@@ -4,8 +4,15 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
 import common.Protocol;
 import common.Writer;
 
@@ -18,26 +25,31 @@ public class MessageWriter extends Writer{
 	public void doDispatchFile(File file, String fileName) throws IOException {
 		writeInt(Protocol.RP_FILE);
 		writeString(fileName);
-		FileInputStream fis=new FileInputStream(file);
-		BufferedInputStream bis=new BufferedInputStream(fis);
 		writeLong(file.length());
-		int byteToWrite=0;
-		int count=0;
-		while ((byteToWrite=bis.read()) !=-1) 
+		
+		int nbPacket=0;
+		long totalLength=file.length();
+		long incr=0;
+		while (incr<totalLength)
 		{
-			writeByte(byteToWrite);
-			count++;
-			if (count>=Protocol.PACKET_SIZE)
-			{
-				send();
-				count=0;
-			}
+			nbPacket++;
+			incr+=Protocol.PACKET_SIZE;
 		}
-		bis.close();
+
+		writeInt(nbPacket);
+		
+
+		FileInputStream fis = new FileInputStream(file);
+		byte[] data=new byte[Protocol.PACKET_SIZE];
+		int lastByte=0;
+		for (int i=0;i<nbPacket;i++)
+		{
+			lastByte=fis.read(data);
+			writeByteArray(data, lastByte);
+			send();
+		}
+		fis.close();
 	}
-
-
-
 
 	public void doDispatchDir(File dir, String dirName) throws IOException {
 		writeInt(Protocol.RP_DIR);
@@ -84,13 +96,6 @@ public class MessageWriter extends Writer{
 	public void doStopControl() {
 		writeInt(Protocol.RQ_STOP_CONTROL);
 	}
-
-	public void doRequestPhoto() {
-		writeInt(Protocol.RQ_PHOTO);
-	}
-
-
-
 
 
 

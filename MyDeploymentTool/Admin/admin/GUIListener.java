@@ -22,5 +22,4 @@ public interface GUIListener {
 
 	public void requestControl(Client client);
 	
-	public void takePicture(List<Client> clients);
 }

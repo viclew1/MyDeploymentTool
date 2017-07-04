@@ -81,4 +81,16 @@ public class Reader {
 			return null;
 		}
 	}
+	
+	protected byte[] readByteArray()
+	{
+		try {
+			int sz=inputStream.readInt();
+			byte[] data = new byte[sz];
+			inputStream.readFully(data);
+			return data;
+		} catch (IOException e) {
+			return null;
+		}
+	}
 }

@@ -398,18 +398,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
     }
 	
 	protected void photoButtonActionPerformed(ActionEvent evt) {
-		if (listener != null) {
-			new Thread () {
-				public void run () {
-					if (model.getSelectedClients().size()==0)
-					{
-						updateStatus("Cette opération nécessite de sélectionner au moins une destination.");
-						return;
-					}
-					listener.takePicture(model.getSelectedClients());
-				}
-			}.start();
-		}
+		updateStatus("PAS IMPLEMENTE");
 	}
 
 	protected void takeControlButtonActionPerformed(ActionEvent evt) {
@@ -597,6 +586,8 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 		osComboBox.setEnabled(enable);
 		refreshButton.setEnabled(enable);
 		connectButton.setEnabled(enable);
+		takeControlButton.setEnabled(enable);
+		photoButton.setEnabled(enable);
 		username.setEnabled(enable);
 		deployButton.setEnabled(enable);
 	}

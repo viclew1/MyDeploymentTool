@@ -48,9 +48,6 @@ public class CommandReader extends Reader {
 			nbFiles=readInt();
 			nbEchecs=readInt();
 			break;
-		case Protocol.RP_PHOTO:
-			img=readBufferedImage();
-			break;
 		default:
 			break;
 		}

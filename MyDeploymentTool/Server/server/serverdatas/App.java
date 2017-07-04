@@ -1,7 +1,7 @@
 package server.serverdatas;
 
 import java.io.File;
-import static common.DiversesOperations.*;
+import static common.MDTUtils.*;
 
 
 public class App {

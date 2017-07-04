@@ -31,9 +31,6 @@ public class MessageReader extends Reader {
 			done=false;
 			img=null;
 			break;
-		case Protocol.RP_PHOTO:
-			img=readBufferedImage();
-			break;
 		default:
 			break;
 		}

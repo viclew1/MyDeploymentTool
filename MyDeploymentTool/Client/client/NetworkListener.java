@@ -1,18 +1,15 @@
 package client;
 
-import java.awt.image.BufferedImage;
 import java.net.UnknownHostException;
 
 public interface NetworkListener {
 
-	void notifyConnection() throws UnknownHostException;
-
-	void processControl(String admin);
-
-	boolean isControlled();
-
-	void stopControl();
-
-	BufferedImage takePicture();
-
+	public void notifyConnection() throws UnknownHostException;
+	public void processControl(String admin);
+	public boolean isControlled();
+	public void stopControl();
+	public void disconnect();
+	
+	public void updateDownload(int percent, String fileName, boolean finished);
+	
 }

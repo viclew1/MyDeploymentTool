@@ -25,7 +25,7 @@ public class CommandSession {
 	public boolean open () {
 		this.close();
 		try {
-			connection = new Socket(InetAddress.getLocalHost().getHostAddress(), Protocol.COMMAND_PORT);
+			connection = new Socket(Protocol.IPSERV, Protocol.COMMAND_PORT);
 			return true;
 		} catch (Exception e) {
 			return false;

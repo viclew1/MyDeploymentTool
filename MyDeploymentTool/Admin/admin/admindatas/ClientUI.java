@@ -1,7 +1,7 @@
 package admin.admindatas;
 
 import javax.swing.JPanel;
-import static common.DiversesOperations.*;
+import static common.MDTUtils.*;
 
 public class ClientUI extends JPanel {
 

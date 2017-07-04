@@ -22,5 +22,4 @@ public interface NetworkListener {
 	boolean takeControl(String name, String dest);
 	void sendCapture(String name, String admin, BufferedImage bufferedImage);
 	void stopControl(String name, String dest);
-	BufferedImage getPhotoFromClient(String name, String dest);
 }

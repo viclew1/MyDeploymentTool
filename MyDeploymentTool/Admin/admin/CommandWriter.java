@@ -58,12 +58,4 @@ public class CommandWriter extends Writer {
 		writeString(name);
 		writeString(address);
 	}
-
-	public void takePicture(String name, String address) {
-		writeInt(Protocol.RQ_PHOTO);
-		writeString(name);
-		writeString(address);
-	}
-
-
 }

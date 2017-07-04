@@ -29,7 +29,7 @@ public class CommandSession {
 	public boolean open () {
 		this.close();
 		try {
-			connection = new Socket(InetAddress.getLocalHost().getHostAddress(), Protocol.COMMAND_PORT);
+			connection = new Socket(Protocol.IPSERV, Protocol.COMMAND_PORT);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -122,19 +122,5 @@ public class CommandSession {
 		} catch (Exception e) {
 		}
 	}
-
-	public BufferedImage takePicture(String name, String address) {
-		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.takePicture(name,address);
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
-			return r.getImg();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
 
 }

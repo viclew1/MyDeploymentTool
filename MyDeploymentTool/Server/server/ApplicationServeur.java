@@ -9,15 +9,15 @@ import server.serverdatas.App;
 import server.serverdatas.Client;
 import server.serverdatas.Model;
 
-public class Application implements NetworkListener {
+public class ApplicationServeur implements NetworkListener {
 
-	public final static String SERVER="C:/Users/vicle/Desktop/Serveur/";
+	public final static String SERVER="D:/Bibliothèque/Desktop/Serveur/";
 	private CommandServer commands = null;
 	private MessageServer message = null;
 	private Model model;
 
 	public static void main(String[] args) {
-		Application m = new Application ();
+		ApplicationServeur m = new ApplicationServeur ();
 		m.start();
 	}
 
@@ -96,6 +96,7 @@ public class Application implements NetworkListener {
 		if (! client .isConnected()) return false;
 		client.setCommandSession(null);
 		client.setMessageSession(null);
+		model.getClients().remove(client);
 		return true;
 	}
 
@@ -186,18 +187,6 @@ public class Application implements NetworkListener {
 		if (!client.isConnected()) return;
 		client.getMessageSession().stopControl();
 	}
-
-	@Override
-	public BufferedImage getPhotoFromClient(String name, String dest) {
-		Client admin = model.getAdmin(name);
-		if (admin == null) return null;
-		if (! admin.isConnected()) return null;
-		Client client=model.getClient(dest);
-		if (!client.isConnected()) return null;
-		return client.getMessageSession().requestPhoto();
-	}
-
-
 
 
 }

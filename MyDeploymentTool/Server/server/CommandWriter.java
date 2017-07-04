@@ -51,10 +51,4 @@ public class CommandWriter extends Writer{
 		writeInt(nbEchecs);
 	}
 
-	public void writePhoto(BufferedImage img) {
-		writeInt(Protocol.RP_PHOTO);
-		writeBufferedImage(img);
-	}
-
-
 }

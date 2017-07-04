@@ -1,7 +1,6 @@
 package client;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 
 import common.Protocol;
@@ -31,7 +30,7 @@ public class MessagesSession extends Thread {
 	public boolean open () {
 		this.close();
 		try {
-			connection = new Socket(InetAddress.getLocalHost().getHostAddress(), Protocol.MESSAGE_PORT);
+			connection = new Socket(Protocol.IPSERV, Protocol.MESSAGE_PORT);
 			start ();
 			return true;
 		} catch (IOException e) {
@@ -43,7 +42,7 @@ public class MessagesSession extends Thread {
 	public boolean operate() {
 		boolean ok = false;
 		try {
-			MessagesReader r = new MessagesReader (connection.getInputStream());
+			MessagesReader r = new MessagesReader (connection.getInputStream(),listener);
 			MessagesWriter w = new MessagesWriter (connection.getOutputStream());
 			r.receive ();
 			switch (r.getType()) 
@@ -68,9 +67,6 @@ public class MessagesSession extends Thread {
 				break;
 			case Protocol.RQ_STOP_CONTROL:
 				listener.stopControl();
-				break;
-			case Protocol.RQ_PHOTO:
-				w.photo(listener.takePicture());
 				break;
 			default:
 				break;

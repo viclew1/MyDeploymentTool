@@ -109,18 +109,4 @@ public class MessageSession {
 		catch (Exception e) {
 		}
 	}
-
-	public BufferedImage requestPhoto() {
-		try {
-			MessageWriter w = new MessageWriter(connection.getOutputStream());
-			MessageReader r = new MessageReader(connection.getInputStream());
-			w.doRequestPhoto();
-			w.send();
-			r.receive();
-			return r.getImg();
-		}
-		catch (Exception e) {
-			return null;
-		}
-	}
 }

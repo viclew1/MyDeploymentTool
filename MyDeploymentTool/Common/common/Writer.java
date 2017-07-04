@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
@@ -75,6 +76,22 @@ public class Writer {
 			e.printStackTrace();
 		}
 	}
+	
+	protected void writeByteArray(byte[] data, int length)
+	{
+		try {
+			dos.writeInt(length);
+			if (data.length!=length)
+			{
+				data=Arrays.copyOf(data, length);
+			}
+			dos.write(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 		
 	public void send()
 	{

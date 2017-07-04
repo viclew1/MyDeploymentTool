@@ -2,7 +2,7 @@ package common;
 
 import java.io.File;
 
-public class DiversesOperations {
+public class MDTUtils {
 
 
 	public static long tailleFichier(File f)
