@@ -35,9 +35,6 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 
 
 	public void start () {
-		Protocol.IPSERV=JOptionPane.showInputDialog("Adresse IP du serveur ?");
-		if (Protocol.IPSERV==null || Protocol.IPSERV.equals(""))
-			System.exit(0);
 		model = new Model ();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
