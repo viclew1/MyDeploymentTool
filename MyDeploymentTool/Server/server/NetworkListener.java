@@ -14,6 +14,7 @@ public interface NetworkListener {
 	boolean connectMessagesAdmin(String name, MessageSession session);
 	boolean disconnectUser(String name);
 	List<App> processApps(String name, String os);
+	List<String> processDirs(String name);
 	List<Client> processUsers(String name);
 	boolean disconnectAdmin(String name);
 	int processInstall(String name, String os, List<String> files, List<String> dests);

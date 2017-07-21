@@ -8,6 +8,7 @@ public class Model {
     private String name;
     private boolean connected;
     private List<App> apps=new ArrayList<App>();
+    private List<String> dirs=new ArrayList<String>();
     private List<ControlGUI> controlFrames=new ArrayList<ControlGUI>();
     private List<Client> clients=new ArrayList<Client>();
 
@@ -77,6 +78,16 @@ public class Model {
 				controlFrames.remove(cg);
 				return;
 			}
+	}
+
+	public void updateDirs(List<String> dirs)
+	{
+		this.dirs=dirs;
+	}
+	
+	public List<String> getDirs()
+	{
+		return this.dirs;
 	}
 
 

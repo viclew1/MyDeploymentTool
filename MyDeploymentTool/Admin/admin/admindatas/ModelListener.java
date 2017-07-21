@@ -17,7 +17,9 @@ public interface ModelListener {
 
 	public void updateClients();
 
-	public void updatePath();
+	public void updateApps();
+	
+	public void updateDirs();
 
 	public void updateInstall(String status);
 

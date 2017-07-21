@@ -123,4 +123,18 @@ public class CommandSession {
 		}
 	}
 
+	public List<String> doGetDirs(String name)
+	{
+		try {
+			CommandWriter w = new CommandWriter(connection.getOutputStream());
+			w.getDirs(name);
+			w.send();
+			CommandReader r = new CommandReader(connection.getInputStream());
+			r.receive();
+			return r.getDirs();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 }

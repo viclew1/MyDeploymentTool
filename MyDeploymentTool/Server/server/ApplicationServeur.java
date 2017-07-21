@@ -12,6 +12,7 @@ import server.serverdatas.Model;
 public class ApplicationServeur implements NetworkListener {
 
 	public final static String SERVER="D:/Bibliothèque/Desktop/Serveur/";
+	public final static File SRV_FILE=new File(SERVER);
 	private CommandServer commands = null;
 	private MessageServer message = null;
 	private Model model;
@@ -29,7 +30,7 @@ public class ApplicationServeur implements NetworkListener {
 		message.start();
 
 		model.getAdmins().add(new Client("test",null));
-		model.getAdmins().add(new Client("Utilisateur",null));
+		model.getAdmins().add(new Client("admin",null));
 	}
 
 
@@ -117,9 +118,23 @@ public class ApplicationServeur implements NetworkListener {
 		if (! client .isConnected()) return null;
 		List<App> apps=new ArrayList<App>();
 		File dossier=new File(SERVER+os);
+		if (!dossier.getAbsolutePath().startsWith(SRV_FILE.getAbsolutePath()))
+			return apps;
 		for (File f : dossier.listFiles())
 			apps.add(new App(f));
 		return apps;
+	}
+	
+	@Override
+	public List<String> processDirs(String name) {
+		Client client = model.getAdmin(name);
+		if (client == null) return null;
+		if (! client .isConnected()) return null;
+		List<String> dirs=new ArrayList<String>();
+		File dossier=new File(SERVER);
+		for (File f : dossier.listFiles())
+			dirs.add(f.getName());
+		return dirs;
 	}
 
 	@Override

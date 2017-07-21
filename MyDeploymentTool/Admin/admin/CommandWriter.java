@@ -58,4 +58,10 @@ public class CommandWriter extends Writer {
 		writeString(name);
 		writeString(address);
 	}
+
+	public void getDirs(String name)
+	{
+		writeInt(Protocol.RQ_DIR_NAMES);
+		writeString(name);
+	}
 }

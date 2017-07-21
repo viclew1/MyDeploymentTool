@@ -50,6 +50,9 @@ public class CommandSession extends Thread{
 			case Protocol.RQ_APPS:
 				writer.apps(listener.processApps(reader.getName(),reader.getOS()));
 				break;
+			case Protocol.RQ_DIR_NAMES:
+				writer.dirs(listener.processDirs(reader.getName()));
+				break;
 			case Protocol.RQ_INSTALL:
 				writer.installResult(reader.getDests().size(),reader.getFiles().size(),listener.processInstall(reader.getName(), reader.getOS(), reader.getFiles(),reader.getDests()));
 				break;

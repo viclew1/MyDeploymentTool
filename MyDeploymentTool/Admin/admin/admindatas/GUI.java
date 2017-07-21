@@ -8,6 +8,9 @@ package admin.admindatas;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -151,7 +154,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 		ipserv = new javax.swing.JTextField();
 		ExplorerPanel = new javax.swing.JPanel();
 		explorerLabel = new javax.swing.JLabel();
-		osComboBox = new javax.swing.JComboBox<>();
+		dirComboBox = new javax.swing.JComboBox<>();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		PCPanel = new javax.swing.JPanel();
 		PCLabel = new javax.swing.JLabel();
@@ -235,10 +238,10 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 
 		explorerLabel.setText("Explorateur");
 
-		osComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Windows", "Mac", "Linux" }));
-		osComboBox.setToolTipText("");
-		osComboBox.setLightWeightPopupEnabled(false);
-		osComboBox.addActionListener(new java.awt.event.ActionListener() {
+		dirComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+		dirComboBox.setToolTipText("");
+		dirComboBox.setLightWeightPopupEnabled(false);
+		dirComboBox.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				osComboBoxActionPerformed(evt);
 			}
@@ -257,7 +260,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 						.addGap(30, 30, 30)
 						.addGroup(ExplorerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addGroup(ExplorerPanelLayout.createSequentialGroup()
-										.addComponent(osComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(dirComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addGap(0, 215, Short.MAX_VALUE))
 								.addComponent(jScrollPane2))
 						.addGap(30, 30, 30))
@@ -267,7 +270,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 				.addGroup(ExplorerPanelLayout.createSequentialGroup()
 						.addComponent(explorerLabel)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(osComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addComponent(dirComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 						.addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
 						.addContainerGap())
@@ -442,7 +445,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 		if (listener != null) {
 			new Thread () {
 				public void run () {
-					listener.requestFileNames(osComboBox.getSelectedItem().toString());
+					listener.requestFileNames(dirComboBox.getSelectedItem().toString());
 				}
 			}.start();
 		}
@@ -454,8 +457,12 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 			new Thread () {
 				public void run () {
 					listener.requestConnection(name);
-					listener.lookForClients();
-					listener.requestFileNames(osComboBox.getSelectedItem().toString());
+					if (model.isConnected())
+					{
+						listener.lookForClients();
+						listener.requestDirNames();
+						listener.requestFileNames(dirComboBox.getSelectedItem().toString());
+					}
 				}
 			}.start();
 		}
@@ -475,7 +482,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 						updateStatus("Cette opération nécessite de sélectionner au moins une destination.");
 						return;
 					}
-					listener.requestInstall(osComboBox.getSelectedItem().toString(), model.getSelectedApps(), model.getSelectedClients());
+					listener.requestInstall(dirComboBox.getSelectedItem().toString(), model.getSelectedApps(), model.getSelectedClients());
 				}
 			}.start();
 		}
@@ -496,36 +503,6 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 		installInfosPanel.removeAll();
 	}
 
-
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				new GUI().setVisible(true);
-			}
-		});
-	}
 
 	// Variables declaration - do not modify                     
 	private javax.swing.JPanel ConnectPanel;
@@ -548,7 +525,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 	private javax.swing.JScrollPane jScrollPane3;
 	private javax.swing.JLabel logLabel;
 	private javax.swing.JPanel logsPanel;
-	private javax.swing.JComboBox<String> osComboBox;
+	private javax.swing.JComboBox<String> dirComboBox;
 	private javax.swing.JButton photoButton;
 	private javax.swing.JButton refreshButton;
 	private javax.swing.JLabel status;
@@ -574,7 +551,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 	}
 
 	@Override
-	public void updatePath() {
+	public void updateApps() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -588,6 +565,16 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 				updateStatus("Liste des applications mise à jour.");
 			}
 		});
+	}
+	
+	@Override
+	public void updateDirs()
+	{
+		List<String> dirsList=model.getDirs();
+		String[] dirs=new String[dirsList.size()];
+		for (int i=0;i<dirsList.size();i++)
+			dirs[i]=dirsList.get(i);
+		dirComboBox.setModel(new DefaultComboBoxModel<>(dirs));
 	}
 
 	@Override
@@ -608,13 +595,14 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 
 	public void enableAll(boolean enable)
 	{
-		osComboBox.setEnabled(enable);
+		dirComboBox.setEnabled(enable);
 		refreshButton.setEnabled(enable);
 		connectButton.setEnabled(enable);
 		takeControlButton.setEnabled(enable);
 		photoButton.setEnabled(enable);
 		username.setEnabled(enable);
 		deployButton.setEnabled(enable);
+		ipserv.setEnabled(enable);
 	}
 
 	@Override

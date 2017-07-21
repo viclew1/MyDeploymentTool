@@ -21,5 +21,7 @@ public interface GUIListener {
 	public void requestInstall(String os, List<App> apps, List<Client> clients);
 
 	public void requestControl(Client client);
+
+	public void requestDirNames();
 	
 }

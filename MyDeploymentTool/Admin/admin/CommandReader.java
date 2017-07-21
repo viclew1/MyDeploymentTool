@@ -16,6 +16,7 @@ public class CommandReader extends Reader {
 	private boolean done=false;
 	private List<Client> clients;
 	private List<App> apps;
+	private List<String> dirs;
 	private int nbFiles,nbEchecs;
 	private BufferedImage img;
 
@@ -44,6 +45,12 @@ public class CommandReader extends Reader {
 			for (int i=0;i<nbApps;i++)
 				apps.add(new App(readString(),readLong()));
 			break;
+		case Protocol.RP_DIR_NAMES:
+			int nbDirs=readInt();
+			dirs=new ArrayList<String>();
+			for (int i=0;i<nbDirs;i++)
+				dirs.add(readString());
+			break;
 		case Protocol.RP_INSTALL:
 			nbFiles=readInt();
 			nbEchecs=readInt();
@@ -63,6 +70,11 @@ public class CommandReader extends Reader {
 
 	public List<App> getApps() {
 		return apps;
+	}
+	
+	public List<String> getDirs()
+	{
+		return dirs;
 	}
 	
 	public int getNbFiles()

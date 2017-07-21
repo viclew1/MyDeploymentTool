@@ -79,11 +79,22 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 	}
 
 	@Override
-	public void requestFileNames(String os) {
+	public void requestFileNames(String dir) {
 		if (model.isConnected()) {
-			List<App> apps=command.doGetApps(model.getName(),os);
+			List<App> apps=command.doGetApps(model.getName(),dir);
 			model.updateApps(apps);
-			gui.updatePath();
+			gui.updateApps();
+		} else {
+			updateInfo("Cette opération nécessite d'être connecté.");
+		}
+	}
+	
+	@Override
+	public void requestDirNames() {
+		if (model.isConnected()) {
+			List<String> dirs=command.doGetDirs(model.getName());
+			model.updateDirs(dirs);
+			gui.updateDirs();
 		} else {
 			updateInfo("Cette opération nécessite d'être connecté.");
 		}

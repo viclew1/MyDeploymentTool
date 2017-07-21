@@ -44,6 +44,9 @@ public class CommandReader extends Reader{
 			name=readString();
 			os=readString();
 			break;
+		case Protocol.RQ_DIR_NAMES:
+			name=readString();
+			break;
 		case Protocol.RQ_INSTALL:
 			name=readString();
 			os=readString();

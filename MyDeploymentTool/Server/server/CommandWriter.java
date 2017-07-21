@@ -44,11 +44,22 @@ public class CommandWriter extends Writer{
 			writeLong(apps.get(i).getSize());
 		}
 	}
+	
+	public void dirs(List<String> dirs)
+	{
+		writeInt(Protocol.RP_DIR_NAMES);
+		writeInt(dirs.size());
+		for (String name : dirs)
+		{
+			writeString(name);
+		}
+	}
 
 	public void installResult(int nbDests, int nbFiles, int nbEchecs) {
 		writeInt(Protocol.RP_INSTALL);
 		writeInt(nbDests*nbFiles);
 		writeInt(nbEchecs);
 	}
+
 
 }
