@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
@@ -102,7 +103,10 @@ public class Writer {
 			baos=new ByteArrayOutputStream();
 			dos=new DataOutputStream(baos);
 		}
-		catch(IOException e)
+		catch(SocketException e)
+		{
+			System.out.println("Socket closed");
+		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}

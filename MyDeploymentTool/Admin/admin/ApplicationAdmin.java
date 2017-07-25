@@ -17,6 +17,7 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 	private MessagesSession messages;
 	private Model model;
 	private ModelListener gui;
+	private ConnectFrame connectFrame;
 
 
 	@Override
@@ -39,9 +40,9 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				GUI g = new GUI(ApplicationAdmin.this, model);
-				g.setVisible(true);
-				gui = g;
+				ConnectFrame cf = new ConnectFrame(ApplicationAdmin.this);
+				cf.setVisible(true);
+				connectFrame = cf;
 			}
 		});
 	}
@@ -60,7 +61,9 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 			messages.close();
 			messages = null;
 			model.setConnected (false);
-			gui.updateConnection(model.getName()+" est déconnecté.");
+			connectFrame.updateStatus(model.getName()+" est déconnecté.");
+			gui.exit();
+			connectFrame.setVisible(true);
 		} else {
 			command = new CommandSession();
 			command.open();
@@ -69,11 +72,18 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 				messages.open();
 				model.setName (name);
 				model.setConnected (true);
-				gui.updateConnection(model.getName()+" est connecté.");
+				connectFrame.updateStatus(model.getName()+" est connecté.");
+				connectFrame.setVisible(false);
+				GUI g=new GUI(this, model);
+				g.setVisible(true);
+				gui=g;
+				lookForClients();
+				requestDirNames();
+				requestFileNames(model.getDirs().get(0));
 			} 
 			else {
 				command = null;
-				gui.updateConnection("Connexion impossible.");
+				connectFrame.updateStatus("Connexion impossible.");
 			}
 		}
 	}

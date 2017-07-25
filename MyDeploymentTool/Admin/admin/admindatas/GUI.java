@@ -6,11 +6,16 @@
 package admin.admindatas;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -42,6 +47,37 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 		initComponents();
 		setListener(listener);
 		this.model=model;
+		
+		JMenuBar jmb=new JMenuBar();
+        JMenu settings=new JMenu("Fichier");
+        
+        JMenuItem disconnect=new JMenuItem("Déconnecter");
+        disconnect.addActionListener(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				listener.requestConnection(model.getName());
+			}
+		});
+        
+        JMenuItem exit=new JMenuItem("Quitter");
+        exit.addActionListener(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				System.exit(0);
+			}
+		});
+
+        settings.add(disconnect);
+        settings.add(exit);
+        jmb.add(settings);
+        this.setJMenuBar(jmb);
+		
 		addDisconnectOnClose();
 		initLoadingThread();
 	}
@@ -117,311 +153,225 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 				this.status.setText(status);
 				installInfosPanel.add(new LogUI(status));
 				jScrollPane3.getVerticalScrollBar().setValue(jScrollPane3.getVerticalScrollBar().getMaximum());
-				System.out.println(status);
 			}
 		}
 	}
 
-	@Override
-	synchronized public void updateConnection(final String status) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				if (model.isConnected()) connectButton.setText("Se déconnecter");
-				else {
-					connectButton.setText("Se connecter");
-					PCShowPanel.removeAll();
-					PCShowPanel.revalidate();
-					PCShowPanel.repaint();
-				}
-				updateStatus(status);
-			}
-		});
-	}
 
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    private void initComponents() {
 
-	private void initComponents() {
+        PCShowPanel = new javax.swing.JPanel();
+        folderPanel = new javax.swing.JPanel();
+        installInfosPanel = new javax.swing.JPanel();
+        ExplorerPanel = new javax.swing.JPanel();
+        explorerLabel = new javax.swing.JLabel();
+        dirComboBox = new javax.swing.JComboBox<>();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        PCPanel = new javax.swing.JPanel();
+        PCLabel = new javax.swing.JLabel();
+        refreshButton = new javax.swing.JButton();
+        deployButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        takeControlButton = new javax.swing.JButton();
+        banButton = new javax.swing.JButton();
+        status = new javax.swing.JLabel();
+        logsPanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        logLabel = new javax.swing.JLabel();
+        cleanButton = new javax.swing.JButton();
 
-		PCShowPanel = new javax.swing.JPanel();
-		folderPanel = new javax.swing.JPanel();
-		installInfosPanel = new javax.swing.JPanel();
-		ConnectPanel = new javax.swing.JPanel();
-		connectLabel = new javax.swing.JLabel();
-		connectButton = new javax.swing.JButton();
-		username = new javax.swing.JTextField();
-		jLabel1 = new javax.swing.JLabel();
-		jLabel2 = new javax.swing.JLabel();
-		ipserv = new javax.swing.JTextField();
-		ExplorerPanel = new javax.swing.JPanel();
-		explorerLabel = new javax.swing.JLabel();
-		dirComboBox = new javax.swing.JComboBox<>();
-		jScrollPane2 = new javax.swing.JScrollPane();
-		PCPanel = new javax.swing.JPanel();
-		PCLabel = new javax.swing.JLabel();
-		refreshButton = new javax.swing.JButton();
-		deployButton = new javax.swing.JButton();
-		jScrollPane1 = new javax.swing.JScrollPane();
-		takeControlButton = new javax.swing.JButton();
-		photoButton = new javax.swing.JButton();
-		status = new javax.swing.JLabel();
-		logsPanel = new javax.swing.JPanel();
-		jScrollPane3 = new javax.swing.JScrollPane();
-		logLabel = new javax.swing.JLabel();
-		cleanButton = new javax.swing.JButton();
+        PCShowPanel.setLayout(new javax.swing.BoxLayout(PCShowPanel, javax.swing.BoxLayout.Y_AXIS));
 
-		PCShowPanel.setLayout(new javax.swing.BoxLayout(PCShowPanel, javax.swing.BoxLayout.Y_AXIS));
+        folderPanel.setLayout(new javax.swing.BoxLayout(folderPanel, javax.swing.BoxLayout.Y_AXIS));
 
-		folderPanel.setLayout(new javax.swing.BoxLayout(folderPanel, javax.swing.BoxLayout.Y_AXIS));
+        installInfosPanel.setLayout(new javax.swing.BoxLayout(installInfosPanel, javax.swing.BoxLayout.Y_AXIS));
 
-		installInfosPanel.setLayout(new javax.swing.BoxLayout(installInfosPanel, javax.swing.BoxLayout.Y_AXIS));
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        ExplorerPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-		ConnectPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        explorerLabel.setText("Explorateur");
 
-		connectLabel.setText("Connexion");
+        dirComboBox.setToolTipText("");
+        dirComboBox.setLightWeightPopupEnabled(false);
+        dirComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dirComboBoxActionPerformed(evt);
+            }
+        });
 
-		connectButton.setText("Se connecter");
-		connectButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				connectButtonActionPerformed(evt);
-			}
-		});
+        jScrollPane2.setViewportView(folderPanel);
 
-		jLabel1.setText("Utilisateur : ");
+        javax.swing.GroupLayout ExplorerPanelLayout = new javax.swing.GroupLayout(ExplorerPanel);
+        ExplorerPanel.setLayout(ExplorerPanelLayout);
+        ExplorerPanelLayout.setHorizontalGroup(
+            ExplorerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ExplorerPanelLayout.createSequentialGroup()
+                .addComponent(explorerLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(ExplorerPanelLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(ExplorerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ExplorerPanelLayout.createSequentialGroup()
+                        .addComponent(dirComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 191, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2))
+                .addGap(30, 30, 30))
+        );
+        ExplorerPanelLayout.setVerticalGroup(
+            ExplorerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ExplorerPanelLayout.createSequentialGroup()
+                .addComponent(explorerLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dirComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2)
+                .addContainerGap())
+        );
 
-		jLabel2.setText("@IP Serveur : ");
+        PCPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-		javax.swing.GroupLayout ConnectPanelLayout = new javax.swing.GroupLayout(ConnectPanel);
-		ConnectPanel.setLayout(ConnectPanelLayout);
-		ConnectPanelLayout.setHorizontalGroup(
-				ConnectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ConnectPanelLayout.createSequentialGroup()
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(connectButton)
-						.addGap(70, 70, 70))
-				.addGroup(ConnectPanelLayout.createSequentialGroup()
-						.addComponent(connectLabel)
-						.addGap(0, 0, Short.MAX_VALUE))
-				.addGroup(ConnectPanelLayout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(ConnectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jLabel1)
-								.addComponent(jLabel2))
-						.addGap(57, 57, 57)
-						.addGroup(ConnectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-								.addComponent(username, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-								.addComponent(ipserv))
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				);
-		ConnectPanelLayout.setVerticalGroup(
-				ConnectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(ConnectPanelLayout.createSequentialGroup()
-						.addComponent(connectLabel)
-						.addGap(40, 40, 40)
-						.addGroup(ConnectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(ConnectPanelLayout.createSequentialGroup()
-										.addComponent(jLabel2)
-										.addGap(18, 18, 18)
-										.addGroup(ConnectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-												.addComponent(jLabel1)
-												.addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-										.addComponent(connectButton))
-								.addGroup(ConnectPanelLayout.createSequentialGroup()
-										.addComponent(ipserv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addGap(0, 0, Short.MAX_VALUE)))
-						.addContainerGap())
-				);
+        PCLabel.setText("PC connectés");
 
-		ExplorerPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        refreshButton.setText("Rafraîchir");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
 
-		explorerLabel.setText("Explorateur");
+        deployButton.setText("Déployer");
+        deployButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deployButtonActionPerformed(evt);
+            }
+        });
 
-		dirComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
-		dirComboBox.setToolTipText("");
-		dirComboBox.setLightWeightPopupEnabled(false);
-		dirComboBox.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				osComboBoxActionPerformed(evt);
-			}
-		});
+        jScrollPane1.setViewportView(PCShowPanel);
 
-		jScrollPane2.setViewportView(folderPanel);
+        takeControlButton.setText("Prendre le contrôle");
+        takeControlButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                takeControlButtonActionPerformed(evt);
+            }
+        });
 
-		javax.swing.GroupLayout ExplorerPanelLayout = new javax.swing.GroupLayout(ExplorerPanel);
-		ExplorerPanel.setLayout(ExplorerPanelLayout);
-		ExplorerPanelLayout.setHorizontalGroup(
-				ExplorerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(ExplorerPanelLayout.createSequentialGroup()
-						.addComponent(explorerLabel)
-						.addGap(0, 0, Short.MAX_VALUE))
-				.addGroup(ExplorerPanelLayout.createSequentialGroup()
-						.addGap(30, 30, 30)
-						.addGroup(ExplorerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(ExplorerPanelLayout.createSequentialGroup()
-										.addComponent(dirComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addGap(0, 215, Short.MAX_VALUE))
-								.addComponent(jScrollPane2))
-						.addGap(30, 30, 30))
-				);
-		ExplorerPanelLayout.setVerticalGroup(
-				ExplorerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(ExplorerPanelLayout.createSequentialGroup()
-						.addComponent(explorerLabel)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(dirComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-						.addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
-						.addContainerGap())
-				);
+        banButton.setText("Bannir");
+        banButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                banButtonActionPerformed(evt);
+            }
+        });
 
-		PCPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        javax.swing.GroupLayout PCPanelLayout = new javax.swing.GroupLayout(PCPanel);
+        PCPanel.setLayout(PCPanelLayout);
+        PCPanelLayout.setHorizontalGroup(
+            PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PCPanelLayout.createSequentialGroup()
+                .addGroup(PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(PCLabel)
+                    .addGroup(PCPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(refreshButton)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(PCPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PCPanelLayout.createSequentialGroup()
+                        .addComponent(takeControlButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(banButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE)
+                        .addComponent(deployButton))
+                    .addComponent(jScrollPane1))
+                .addContainerGap())
+        );
+        PCPanelLayout.setVerticalGroup(
+            PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PCPanelLayout.createSequentialGroup()
+                .addComponent(PCLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(refreshButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(deployButton)
+                    .addComponent(takeControlButton)
+                    .addComponent(banButton))
+                .addContainerGap())
+        );
 
-		PCLabel.setText("PC connectés");
+        logsPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-		refreshButton.setText("Rafraîchir");
-		refreshButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				refreshButtonActionPerformed(evt);
-			}
-		});
+        jScrollPane3.setViewportView(installInfosPanel);
 
-		deployButton.setText("Déployer");
-		deployButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				deployButtonActionPerformed(evt);
-			}
-		});
+        logLabel.setText("Logs");
 
-		jScrollPane1.setViewportView(PCShowPanel);
+        cleanButton.setText("Effacer");
+        cleanButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cleanButtonActionPerformed(evt);
+            }
+        });
 
-		takeControlButton.setText("Prendre le contrôle");
-		takeControlButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				takeControlButtonActionPerformed(evt);
-			}
-		});
+        javax.swing.GroupLayout logsPanelLayout = new javax.swing.GroupLayout(logsPanel);
+        logsPanel.setLayout(logsPanelLayout);
+        logsPanelLayout.setHorizontalGroup(
+            logsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(logsPanelLayout.createSequentialGroup()
+                .addComponent(logLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(logsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(logsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, logsPanelLayout.createSequentialGroup()
+                        .addGap(0, 185, Short.MAX_VALUE)
+                        .addComponent(cleanButton)))
+                .addContainerGap())
+        );
+        logsPanelLayout.setVerticalGroup(
+            logsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, logsPanelLayout.createSequentialGroup()
+                .addComponent(logLabel)
+                .addGap(34, 34, 34)
+                .addComponent(jScrollPane3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cleanButton)
+                .addContainerGap())
+        );
 
-		photoButton.setText("Prendre une photo");
-		photoButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				photoButtonActionPerformed(evt);
-			}
-		});
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(ExplorerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(PCPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(logsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(status, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(PCPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(logsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ExplorerPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(status, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
-		javax.swing.GroupLayout PCPanelLayout = new javax.swing.GroupLayout(PCPanel);
-		PCPanel.setLayout(PCPanelLayout);
-		PCPanelLayout.setHorizontalGroup(
-				PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(PCPanelLayout.createSequentialGroup()
-						.addGroup(PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(PCLabel)
-								.addGroup(PCPanelLayout.createSequentialGroup()
-										.addGap(10, 10, 10)
-										.addComponent(refreshButton)))
-						.addGap(0, 0, Short.MAX_VALUE))
-				.addGroup(PCPanelLayout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PCPanelLayout.createSequentialGroup()
-										.addComponent(takeControlButton)
-										.addGap(18, 18, 18)
-										.addComponent(photoButton)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-										.addComponent(deployButton))
-								.addComponent(jScrollPane1))
-						.addContainerGap())
-				);
-		PCPanelLayout.setVerticalGroup(
-				PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(PCPanelLayout.createSequentialGroup()
-						.addComponent(PCLabel)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(refreshButton)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(jScrollPane1)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(PCPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(deployButton)
-								.addComponent(takeControlButton)
-								.addComponent(photoButton))
-						.addContainerGap())
-				);
+        pack();
+    }                        
 
-		logsPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-		jScrollPane3.setViewportView(installInfosPanel);
-
-		logLabel.setText("Logs");
-
-		cleanButton.setText("Effacer");
-		cleanButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				cleanButtonActionPerformed(evt);
-			}
-		});
-
-		javax.swing.GroupLayout logsPanelLayout = new javax.swing.GroupLayout(logsPanel);
-		logsPanel.setLayout(logsPanelLayout);
-		logsPanelLayout.setHorizontalGroup(
-				logsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(logsPanelLayout.createSequentialGroup()
-						.addComponent(logLabel)
-						.addGap(0, 0, Short.MAX_VALUE))
-				.addGroup(logsPanelLayout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(logsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jScrollPane3)
-								.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, logsPanelLayout.createSequentialGroup()
-										.addGap(0, 213, Short.MAX_VALUE)
-										.addComponent(cleanButton)))
-						.addContainerGap())
-				);
-		logsPanelLayout.setVerticalGroup(
-				logsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, logsPanelLayout.createSequentialGroup()
-						.addComponent(logLabel)
-						.addGap(34, 34, 34)
-						.addComponent(jScrollPane3)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(cleanButton)
-						.addContainerGap())
-				);
-
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(layout.createSequentialGroup()
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-								.addComponent(ExplorerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(ConnectPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(PCPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(logsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addContainerGap())
-				.addComponent(status, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				);
-		layout.setVerticalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(layout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(layout.createSequentialGroup()
-										.addComponent(ConnectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-										.addComponent(ExplorerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-								.addComponent(PCPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(logsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(status, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-				);
-
-		pack();
-	}
-
+	
 	protected void photoButtonActionPerformed(ActionEvent evt) {
 		updateStatus("PAS IMPLEMENTE");
 	}
@@ -441,7 +391,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 		}
 	}
 
-	protected void osComboBoxActionPerformed(ActionEvent evt) {
+	protected void dirComboBoxActionPerformed(ActionEvent evt) {
 		if (listener != null) {
 			new Thread () {
 				public void run () {
@@ -450,23 +400,6 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 			}.start();
 		}
 	}
-
-	private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
-		if (listener != null) {
-			final String name = username.getText();
-			new Thread () {
-				public void run () {
-					listener.requestConnection(name);
-					if (model.isConnected())
-					{
-						listener.lookForClients();
-						listener.requestDirNames();
-						listener.requestFileNames(dirComboBox.getSelectedItem().toString());
-					}
-				}
-			}.start();
-		}
-	}                                             
 
 	private void deployButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
 		if (listener != null) {
@@ -486,7 +419,22 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 				}
 			}.start();
 		}
-	}                                            
+	} 
+	
+	private void banButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
+		if (listener != null) {
+			new Thread () {
+				public void run () {
+					if (model.getSelectedClients().size()==0)
+					{
+						updateStatus("Cette opération nécessite de sélectionner au moins un client.");
+						return;
+					}
+					System.out.println("BANNIR : PAS ENCORE IMPLEMENTE");
+				}
+			}.start();
+		}
+	}
 
 	private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
 		if (listener != null) {
@@ -505,34 +453,27 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 
 
 	// Variables declaration - do not modify                     
-	private javax.swing.JPanel ConnectPanel;
 	private javax.swing.JPanel ExplorerPanel;
 	private javax.swing.JLabel PCLabel;
 	private javax.swing.JPanel PCPanel;
 	private javax.swing.JPanel PCShowPanel;
 	private javax.swing.JButton cleanButton;
-	private javax.swing.JButton connectButton;
-	private javax.swing.JLabel connectLabel;
 	private javax.swing.JButton deployButton;
+	private javax.swing.JButton banButton;
 	private javax.swing.JLabel explorerLabel;
 	private javax.swing.JPanel folderPanel;
 	private javax.swing.JPanel installInfosPanel;
-	private javax.swing.JTextField ipserv;
-	private javax.swing.JLabel jLabel1;
-	private javax.swing.JLabel jLabel2;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
 	private javax.swing.JScrollPane jScrollPane3;
 	private javax.swing.JLabel logLabel;
 	private javax.swing.JPanel logsPanel;
 	private javax.swing.JComboBox<String> dirComboBox;
-	private javax.swing.JButton photoButton;
 	private javax.swing.JButton refreshButton;
 	private javax.swing.JLabel status;
 	private javax.swing.JButton takeControlButton;
-	private javax.swing.JTextField username;
-	// End of variables declaration                   
-
+	
+	
 	@Override
 	public void updateClients() {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -597,17 +538,15 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 	{
 		dirComboBox.setEnabled(enable);
 		refreshButton.setEnabled(enable);
-		connectButton.setEnabled(enable);
 		takeControlButton.setEnabled(enable);
-		photoButton.setEnabled(enable);
-		username.setEnabled(enable);
 		deployButton.setEnabled(enable);
-		ipserv.setEnabled(enable);
 	}
 
 	@Override
-	public void updateInstall(String status) {
-		SwingUtilities.invokeLater(new Runnable() {
+	public void updateInstall(String status) 
+	{
+		SwingUtilities.invokeLater(new Runnable() 
+		{
 			@Override
 			public void run() {
 				for (Client c : model.getClients())
@@ -634,5 +573,11 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 				updateStatus(status);
 			}
 		});
+	}
+
+	@Override
+	public void exit()
+	{
+		setVisible(false);
 	}
 }

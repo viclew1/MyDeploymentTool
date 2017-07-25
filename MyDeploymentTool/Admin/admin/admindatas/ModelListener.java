@@ -13,8 +13,6 @@ public interface ModelListener {
     
     public void updateStatus (String status);
     
-    public void updateConnection (String status);
-
 	public void updateClients();
 
 	public void updateApps();
@@ -26,5 +24,7 @@ public interface ModelListener {
 	public void loading();
 
 	public void stopLoading();
+
+	public void exit();
 
 }
