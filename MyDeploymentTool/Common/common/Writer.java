@@ -25,7 +25,12 @@ public class Writer {
 	protected void writeBufferedImage(BufferedImage img)
 	{
 		try {
-			ImageIO.write(img,"PNG",dos);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write( img, "PNG", baos );
+			baos.flush();
+			byte[] imageInByte = baos.toByteArray();
+			baos.close();
+			writeByteArray(imageInByte, imageInByte.length);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -93,7 +98,6 @@ public class Writer {
 	}
 	
 	
-		
 	public void send()
 	{
 		byte[] message=baos.toByteArray();
@@ -105,7 +109,7 @@ public class Writer {
 		}
 		catch(SocketException e)
 		{
-			System.out.println("Socket closed");
+			System.out.println("Send failed : Socket closed");
 		} catch (IOException e)
 		{
 			e.printStackTrace();

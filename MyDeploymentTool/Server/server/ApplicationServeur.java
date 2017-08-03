@@ -187,7 +187,6 @@ public class ApplicationServeur implements NetworkListener {
 		if (!client.isConnected()) ok=false;
 		if (!ok)
 		{
-			
 			return;
 		}
 		admin.getMessageSession().updateControll(addr,img);

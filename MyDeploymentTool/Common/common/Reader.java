@@ -2,6 +2,7 @@ package common;
 
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,7 +77,8 @@ public class Reader {
 	protected BufferedImage readBufferedImage()
 	{
 		try {
-			return ImageIO.read(inputStream);
+			InputStream in = new ByteArrayInputStream(readByteArray());
+			return ImageIO.read(in);
 		} catch (IOException e) {
 			return null;
 		}

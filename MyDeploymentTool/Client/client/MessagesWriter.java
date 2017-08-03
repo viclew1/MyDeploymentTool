@@ -1,6 +1,5 @@
 package client;
 
-import java.awt.image.BufferedImage;
 import java.io.OutputStream;
 
 import common.Protocol;

@@ -1,8 +1,8 @@
 package client;
 
 import java.awt.image.BufferedImage;
-import java.net.InetAddress;
 import java.net.Socket;
+
 import common.Protocol;
 
 
@@ -18,6 +18,7 @@ public class CommandSession {
 			if (connection != null) connection.close();
 			connection = null;
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return true;
 	}
@@ -28,6 +29,7 @@ public class CommandSession {
 			connection = new Socket(Protocol.IPSERV, Protocol.COMMAND_PORT);
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -41,6 +43,7 @@ public class CommandSession {
 			r.receive();
 			return r.getDone();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -54,6 +57,7 @@ public class CommandSession {
 			r.receive();
 			return r.getDone();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -63,8 +67,8 @@ public class CommandSession {
 			CommandWriter w = new CommandWriter(connection.getOutputStream());
 			w.control(admin,img);
 			w.send();
-			open();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
