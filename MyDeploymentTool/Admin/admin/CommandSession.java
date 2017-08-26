@@ -1,7 +1,5 @@
 package admin;
 
-import java.awt.image.BufferedImage;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
 
@@ -13,6 +11,9 @@ import common.Protocol;
 public class CommandSession {
 
 	private Socket connection;
+	
+	private CommandWriter writer;
+	private CommandReader reader;
 	
 	public CommandSession () {
 	}
@@ -30,6 +31,8 @@ public class CommandSession {
 		this.close();
 		try {
 			connection = new Socket(Protocol.IPSERV, Protocol.COMMAND_PORT);
+			writer = new CommandWriter(connection.getOutputStream());
+			reader = new CommandReader(connection.getInputStream());
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -38,12 +41,10 @@ public class CommandSession {
 
 	public boolean doDisconnect(String name) {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.disconnect(name);
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
-			return r.getDone();
+			writer.disconnect(name);
+			writer.send();
+			reader.receive();
+			return reader.getDone();
 		} catch (Exception e) {
 			return false;
 		}
@@ -51,12 +52,10 @@ public class CommandSession {
 
 	public boolean doConnect (String name) {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.connect(name);
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
-			return r.getDone();
+			writer.connect(name);
+			writer.send();
+			reader.receive();
+			return reader.getDone();
 		} catch (Exception e) {
 			return false;
 		}
@@ -64,12 +63,10 @@ public class CommandSession {
 	
 	public List<Client> doGetUsers(String name) {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.getUsers(name);
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
-			return r.getUsers();
+			writer.getUsers(name);
+			writer.send();
+			reader.receive();
+			return reader.getUsers();
 		} catch (Exception e) {
 			return null;
 		}
@@ -77,12 +74,10 @@ public class CommandSession {
 
 	public List<App> doGetApps(String name, String os) {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.getApps(name,os);
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
-			return r.getApps();
+			writer.getApps(name,os);
+			writer.send();
+			reader.receive();
+			return reader.getApps();
 		} catch (Exception e) {
 			return null;
 		}
@@ -90,12 +85,10 @@ public class CommandSession {
 
 	public int[] install(String name, String os, List<App> apps, List<Client> clients) {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.install(name,os,apps,clients);
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
-			return new int[]{r.getNbFiles(),r.getNbEchecs()};
+			writer.install(name,os,apps,clients);
+			writer.send();
+			reader.receive();
+			return new int[]{reader.getNbFiles(),reader.getNbEchecs()};
 		} catch (Exception e) {
 			return null;
 		}
@@ -103,11 +96,9 @@ public class CommandSession {
 
 	public boolean doControl(String name, String address) {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.control(name,address);
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
+			writer.control(name,address);
+			writer.send();
+			reader.receive();
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -116,9 +107,8 @@ public class CommandSession {
 
 	public void stopControl(String name, String address) {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.stopControl(name,address);
-			w.send();
+			writer.stopControl(name,address);
+			writer.send();
 		} catch (Exception e) {
 		}
 	}
@@ -126,12 +116,10 @@ public class CommandSession {
 	public List<String> doGetDirs(String name)
 	{
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.getDirs(name);
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
-			return r.getDirs();
+			writer.getDirs(name);
+			writer.send();
+			reader.receive();
+			return reader.getDirs();
 		} catch (Exception e) {
 			return null;
 		}

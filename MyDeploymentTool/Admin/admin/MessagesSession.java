@@ -1,7 +1,6 @@
 package admin;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 
 import common.Protocol;
@@ -12,6 +11,9 @@ public class MessagesSession extends Thread {
 	private Socket connection;
 	private String name;
 	private NetworkListener listener;
+	
+	private MessagesWriter writer;
+	private MessagesReader reader;
 
 	public MessagesSession (String name, NetworkListener listener) {
 		this.name = name;
@@ -45,15 +47,14 @@ public class MessagesSession extends Thread {
 	public boolean operate() {
 		boolean ok = false;
 		try {
-			MessagesReader r = new MessagesReader (connection.getInputStream());
-			r.receive ();
-			switch (r.getType()) 
+			reader.receive ();
+			switch (reader.getType()) 
 			{
 			case Protocol.RP_INFO:
-				listener.updateInfo(r.getInfo());
+				listener.updateInfo(reader.getInfo());
 				break;
 			case Protocol.RP_CONTROL:
-				listener.updateControl(r.getClientAddr(),r.getImg());
+				listener.updateControl(reader.getClientAddr(),reader.getImg());
 			default:
 				break;
 			}
@@ -66,9 +67,10 @@ public class MessagesSession extends Thread {
 
 	public void run() {
 		try {
-			MessagesWriter w = new MessagesWriter (connection.getOutputStream());
-			w.connect(name);
-			w.send();
+			writer = new MessagesWriter (connection.getOutputStream());
+			reader = new MessagesReader (connection.getInputStream());
+			writer.connect(name);
+			writer.send();
 		}
 		catch (IOException e) {
 		}

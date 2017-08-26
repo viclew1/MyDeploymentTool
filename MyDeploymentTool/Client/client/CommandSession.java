@@ -10,6 +10,9 @@ public class CommandSession {
 
 	private Socket connection;
 	
+	private CommandWriter writer;
+	private CommandReader reader;
+	
 	public CommandSession () {
 	}
 
@@ -27,6 +30,8 @@ public class CommandSession {
 		this.close();
 		try {
 			connection = new Socket(Protocol.IPSERV, Protocol.COMMAND_PORT);
+			writer = new CommandWriter(connection.getOutputStream());
+			reader = new CommandReader(connection.getInputStream());
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -36,12 +41,10 @@ public class CommandSession {
 
 	public boolean doDisconnect() {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.disconnect();
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
-			return r.getDone();
+			writer.disconnect();
+			writer.send();
+			reader.receive();
+			return reader.getDone();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -50,12 +53,10 @@ public class CommandSession {
 
 	public boolean doConnect (String name) {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.connect(name);
-			w.send();
-			CommandReader r = new CommandReader(connection.getInputStream());
-			r.receive();
-			return r.getDone();
+			writer.connect(name);
+			writer.send();
+			reader.receive();
+			return reader.getDone();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -64,9 +65,8 @@ public class CommandSession {
 
 	public void sendImage(String admin, BufferedImage img) {
 		try {
-			CommandWriter w = new CommandWriter(connection.getOutputStream());
-			w.control(admin,img);
-			w.send();
+			writer.control(admin,img);
+			writer.send();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

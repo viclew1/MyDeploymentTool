@@ -1,14 +1,9 @@
 package admin;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
-
 import admin.admindatas.*;
-import common.Protocol;
 
 
 public class ApplicationAdmin implements NetworkListener, GUIListener, ControlListener {

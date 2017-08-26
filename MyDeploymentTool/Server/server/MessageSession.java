@@ -11,6 +11,9 @@ public class MessageSession {
 
 	private Socket connection;
 	private NetworkListener listener;
+	
+	private MessageReader reader;
+	private MessageWriter writer;
 
 	public MessageSession(Socket connection, NetworkListener listener) {
 		this.connection = connection;
@@ -29,19 +32,23 @@ public class MessageSession {
 
 	public boolean processConnection () {
 		try {
-			MessageReader reader = new MessageReader(connection.getInputStream());
-			reader.receive();
-			switch (reader.getType()) {
-			case Protocol.RQ_CONNECT_ADMIN:
-				listener.connectMessagesAdmin(reader.getUserName(), this);
-				break;
-			case Protocol.RQ_CONNECT:
-				listener.connectMessagesUser(connection.getInetAddress().getHostName(), connection.getInetAddress().getHostAddress(), this);
-				break;
-			default:
-				break;
+			reader = new MessageReader(connection.getInputStream());
+			writer = new MessageWriter(connection.getOutputStream());
+			while (true)
+			{
+				reader.receive();
+				switch (reader.getType()) {
+				case Protocol.RQ_CONNECT_ADMIN:
+					listener.connectMessagesAdmin(reader.getUserName(), this);
+					break;
+				case Protocol.RQ_CONNECT:
+					listener.connectMessagesUser(connection.getInetAddress().getHostName(), connection.getInetAddress().getHostAddress(), this);
+					break;
+				default:
+					break;
+				}
+				return false;
 			}
-			return false;
 		}
 		catch (Exception e) {
 		}
@@ -50,15 +57,13 @@ public class MessageSession {
 
 	public boolean dispatchFile (String path, String fileName) {
 		try {
-			MessageWriter w = new MessageWriter(connection.getOutputStream());
-			MessageReader r = new MessageReader(connection.getInputStream());
 			File file=new File(path+fileName);
 			if (file.isFile())
-				w.doDispatchFile(file, fileName);
-			else w.doDispatchDir(file, fileName);
-			w.send();
-			r.receive();
-			return r.getDone();
+				writer.doDispatchFile(file, fileName);
+			else writer.doDispatchDir(file, fileName);
+			writer.send();
+			reader.receive();
+			return reader.getDone();
 		}
 		catch (Exception e) {
 			return false;
@@ -67,9 +72,8 @@ public class MessageSession {
 
 	public void doDispatchInfos(String info) {
 		try {
-			MessageWriter w = new MessageWriter(connection.getOutputStream());
-			w.doDispatchInfo(info);
-			w.send();
+			writer.doDispatchInfo(info);
+			writer.send();
 		}
 		catch (Exception e) {
 			return;
@@ -78,12 +82,10 @@ public class MessageSession {
 
 	public boolean requestControl(String name) {
 		try {
-			MessageWriter w = new MessageWriter(connection.getOutputStream());
-			MessageReader r = new MessageReader(connection.getInputStream());
-			w.doRequestControl(name);
-			w.send();
-			r.receive();
-			return r.getDone();
+			writer.doRequestControl(name);
+			writer.send();
+			reader.receive();
+			return reader.getDone();
 		}
 		catch (Exception e) {
 			return false;
@@ -92,9 +94,8 @@ public class MessageSession {
 
 	public void updateControll(String addr, BufferedImage img) {
 		try {
-			MessageWriter w = new MessageWriter(connection.getOutputStream());
-			w.doUpdateControl(addr,img);
-			w.send();
+			writer.doUpdateControl(addr,img);
+			writer.send();
 		}
 		catch (Exception e) {
 		}
@@ -102,9 +103,8 @@ public class MessageSession {
 
 	public void stopControl() {
 		try {
-			MessageWriter w = new MessageWriter(connection.getOutputStream());
-			w.doStopControl();
-			w.send();
+			writer.doStopControl();
+			writer.send();
 		}
 		catch (Exception e) {
 		}

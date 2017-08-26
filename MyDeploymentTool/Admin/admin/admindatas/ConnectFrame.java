@@ -6,6 +6,7 @@
 package admin.admindatas;
 
 import admin.GUIListener;
+import common.Protocol;
 
 /**
  *
@@ -114,6 +115,7 @@ public class ConnectFrame extends javax.swing.JFrame {
     {
     	if (listener != null) {
 			final String name = username.getText();
+			Protocol.IPSERV=username1.getText();
 			new Thread () {
 				public void run () 
 				{

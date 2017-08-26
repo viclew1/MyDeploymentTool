@@ -10,6 +10,9 @@ public class MessagesSession extends Thread {
 
 	private Socket connection;
 	private NetworkListener listener;
+	
+	private MessagesWriter writer;
+	private MessagesReader reader;
 
 	public MessagesSession (NetworkListener listener) {
 		if (listener == null) throw new RuntimeException("listener cannot be null");
@@ -42,28 +45,26 @@ public class MessagesSession extends Thread {
 	public boolean operate() {
 		boolean ok = false;
 		try {
-			MessagesReader r = new MessagesReader (connection.getInputStream(),listener);
-			MessagesWriter w = new MessagesWriter (connection.getOutputStream());
-			r.receive ();
-			switch (r.getType()) 
+			reader.receive ();
+			switch (reader.getType()) 
 			{
 			case Protocol.RP_FILE:
-				if (r.getDone())
-					w.ok();
-				else w.ko();
+				if (reader.getDone())
+					writer.ok();
+				else writer.ko();
 				break;
 			case Protocol.RP_DIR:
-				if (r.getDone())
-					w.ok();
-				else w.ko();
+				if (reader.getDone())
+					writer.ok();
+				else writer.ko();
 				break;
 			case Protocol.RQ_CONTROL:
 				if (!listener.isControlled())
 				{
-					w.ok();
-					listener.processControl(r.getAdmin());
+					writer.ok();
+					listener.processControl(reader.getAdmin());
 				}
-				else w.ko();
+				else writer.ko();
 				break;
 			case Protocol.RQ_STOP_CONTROL:
 				listener.stopControl();
@@ -71,7 +72,7 @@ public class MessagesSession extends Thread {
 			default:
 				break;
 			}
-			w.send();
+			writer.send();
 			ok=true;
 		}
 		catch (IOException e) {
@@ -81,9 +82,10 @@ public class MessagesSession extends Thread {
 
 	public void run() {
 		try {
-			MessagesWriter w = new MessagesWriter (connection.getOutputStream());
-			w.connect();
-			w.send();
+			reader = new MessagesReader (connection.getInputStream(),listener);
+			writer = new MessagesWriter (connection.getOutputStream());
+			writer.connect();
+			writer.send();
 		}
 		catch (IOException e) {
 		}
