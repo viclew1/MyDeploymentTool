@@ -196,7 +196,7 @@ public class ClientFrame extends javax.swing.JFrame {
 			public void run()
 			{
 		    	Protocol.DEST_DIR=dest;
-		    	ipLabel.setText(dest);
+		    	destLabel.setText(dest);
 			}
 		}).start();
     }
