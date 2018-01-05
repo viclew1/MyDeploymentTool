@@ -1,6 +1,5 @@
 package server;
 
-import java.awt.image.BufferedImage;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -32,6 +31,8 @@ public class CommandWriter extends Writer{
 		{
 			writeString(clients.get(i).getName());
 			writeString(clients.get(i).getAddress());
+			writeBoolean(clients.get(i).isBusy());
+			writeBoolean(clients.get(i).isConnected());
 		}
 	}
 
@@ -54,12 +55,4 @@ public class CommandWriter extends Writer{
 			writeString(name);
 		}
 	}
-
-	public void installResult(int nbDests, int nbFiles, int nbEchecs) {
-		writeInt(Protocol.RP_INSTALL);
-		writeInt(nbDests*nbFiles);
-		writeInt(nbEchecs);
-	}
-
-
 }

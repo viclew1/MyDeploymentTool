@@ -2,6 +2,8 @@ package client;
 import java.awt.AWTException;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
@@ -10,7 +12,9 @@ import java.net.UnknownHostException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
 import client.clientdatas.ClientFrame;
+import client.clientdatas.Icons;
 import client.clientdatas.Model;
 import common.Protocol;
 
@@ -108,11 +112,16 @@ public class ApplicationClient implements NetworkListener {
 					int width = gd.getDisplayMode().getWidth();
 					int height = gd.getDisplayMode().getHeight();
 					Rectangle r=new Rectangle(0, 0, (int)width, (int)height);
-					BufferedImage img;
 					Robot rob=new Robot();
+					Point pointer;
+					int xMouse, yMouse;
 					while (model.getControlled())
 					{
-						img=rob.createScreenCapture(r);
+						final BufferedImage img=rob.createScreenCapture(r);
+						pointer = MouseInfo.getPointerInfo().getLocation();
+						xMouse = (int) pointer.getX();
+						yMouse = (int) pointer.getY();
+						img.getGraphics().drawImage(Icons.MOUSE_IMAGE, xMouse, yMouse, 16, 24, null);
 						command.sendImage(admin,img);
 					}
 				} catch (AWTException e) {

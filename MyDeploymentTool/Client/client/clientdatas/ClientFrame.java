@@ -73,6 +73,7 @@ public class ClientFrame extends javax.swing.JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				listener.disconnect();
 				System.exit(0);
 			}
 		});
@@ -173,9 +174,9 @@ public class ClientFrame extends javax.swing.JFrame {
 			@Override
 			public void run()
 			{
+		    	listener.disconnect();
 		    	Protocol.IPSERV=ip;
 		    	ipLabel.setText(ip);
-		    	listener.disconnect();
 		    	try
 				{
 					listener.notifyConnection();

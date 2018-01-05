@@ -26,7 +26,7 @@ public class Writer {
 	{
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ImageIO.write( img, "PNG", baos );
+			ImageIO.write( img, "jpg", baos );
 			baos.flush();
 			byte[] imageInByte = baos.toByteArray();
 			baos.close();
@@ -98,7 +98,7 @@ public class Writer {
 	}
 	
 	
-	public void send()
+	public boolean send()
 	{
 		byte[] message=baos.toByteArray();
 		try{
@@ -106,6 +106,7 @@ public class Writer {
 			outputStream.flush();
 			baos=new ByteArrayOutputStream();
 			dos=new DataOutputStream(baos);
+			return true;
 		}
 		catch(SocketException e)
 		{
@@ -114,5 +115,8 @@ public class Writer {
 		{
 			e.printStackTrace();
 		}
+		baos=new ByteArrayOutputStream();
+		dos=new DataOutputStream(baos);
+		return false;
 	}
 }

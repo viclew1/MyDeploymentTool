@@ -16,9 +16,9 @@ public interface GUIListener {
 
 	public void lookForClients();
 
-	public void requestFileNames(String os);
+	public void requestFileNames(String dir);
 
-	public void requestInstall(String os, List<App> apps, List<Client> clients);
+	public void requestInstall(String dir, List<App> apps, List<Client> clients);
 
 	public void requestControl(Client client);
 

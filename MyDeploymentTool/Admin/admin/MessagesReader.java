@@ -3,6 +3,10 @@ package admin;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import admin.admindatas.Client;
 import common.Protocol;
 import common.Reader;
 
@@ -16,12 +20,21 @@ public class MessagesReader extends Reader {
 	private String clientName;
 	private BufferedImage img;
 	private String clientAddr;
+	private List<Client> clients;
 
 
 	public void receive() throws IOException {
 		type = readInt ();
 		switch (type)
 		{
+		case Protocol.RP_OK:
+			break;
+		case Protocol.RP_CLIENTS:
+			int nbCli=readInt();
+			clients=new ArrayList<Client>();
+			for (int i=0;i<nbCli;i++)
+				clients.add(new Client(readString(), readString(), readBoolean(), readBoolean()));
+			break;
 		case Protocol.RP_INFO:
 			info=readString();
 			break;
@@ -53,6 +66,11 @@ public class MessagesReader extends Reader {
 
 	public String getClientAddr() {
 		return clientAddr;
+	}
+	
+
+	public List<Client> getUsers() {
+		return clients;
 	}
 
 }

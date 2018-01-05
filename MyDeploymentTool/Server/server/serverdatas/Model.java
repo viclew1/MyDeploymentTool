@@ -13,6 +13,10 @@ public class Model {
 		return clients;
 	}
 	
+	public List<Client> getAdmins() {
+		return admins;
+	}
+	
 	public Client getClient(String address) {
     	for (Client c : getClients()) {
     		if (address.equals(c.getAddress()))
@@ -29,7 +33,4 @@ public class Model {
     	return null;
 	}
 
-	public List<Client> getAdmins() {
-		return admins;
-	}
 }

@@ -1,20 +1,15 @@
 package server;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 import common.Protocol;
 import common.Writer;
+import server.serverdatas.Client;
 
 public class MessageWriter extends Writer{
 
@@ -22,11 +17,28 @@ public class MessageWriter extends Writer{
 		super (outputStream);
 	}
 
-	public void doDispatchFile(File file, String fileName) throws IOException {
+	public void ok()
+	{
+		writeInt(Protocol.RP_OK);
+	}
+	
+	public void clients(List<Client> clients) {
+		writeInt(Protocol.RP_CLIENTS);
+		writeInt(clients.size());
+		for (int i=0;i<clients.size();i++)
+		{
+			writeString(clients.get(i).getName());
+			writeString(clients.get(i).getAddress());
+			writeBoolean(clients.get(i).isBusy());
+			writeBoolean(clients.get(i).isConnected());
+		}
+	}
+
+	public boolean doDispatchFile(File file, String fileName) throws IOException {
 		writeInt(Protocol.RP_FILE);
 		writeString(fileName);
 		writeLong(file.length());
-		
+
 		int nbPacket=0;
 		long totalLength=file.length();
 		long incr=0;
@@ -37,7 +49,7 @@ public class MessageWriter extends Writer{
 		}
 
 		writeInt(nbPacket);
-		
+
 
 		FileInputStream fis = new FileInputStream(file);
 		byte[] data=new byte[Protocol.PACKET_SIZE];
@@ -46,9 +58,15 @@ public class MessageWriter extends Writer{
 		{
 			lastByte=fis.read(data);
 			writeByteArray(data, lastByte);
-			send();
+			boolean ok = send();
+			if (!ok)
+			{
+				fis.close();
+				return false;
+			}
 		}
 		fis.close();
+		return true;
 	}
 
 	public void doDispatchDir(File dir, String dirName) throws IOException {
@@ -63,7 +81,11 @@ public class MessageWriter extends Writer{
 		prefix+="/";
 		for (File file : dir.listFiles())
 			if (file.isFile())
-				doDispatchFile(file,prefix+file.getName());
+			{
+				boolean ok = doDispatchFile(file,prefix+file.getName());
+				if (!ok)
+					return;
+			}
 			else
 				doDispatchDir(file, prefix+file.getName());
 	}

@@ -24,6 +24,7 @@ public class MessagesSession extends Thread {
 		this.interrupt();
 		try {
 			if (connection != null) connection.close();
+			if (reader!= null) reader.closeAll();
 			connection = null;
 		} catch (IOException e) {
 		}
@@ -34,6 +35,15 @@ public class MessagesSession extends Thread {
 		this.close();
 		try {
 			connection = new Socket(Protocol.IPSERV, Protocol.MESSAGE_PORT);
+			try {
+				reader = new MessagesReader (connection.getInputStream(),listener);
+				writer = new MessagesWriter (connection.getOutputStream());
+				writer.connect();
+				writer.send();
+				reader.receive();
+			}
+			catch (IOException e) {
+			}
 			start ();
 			return true;
 		} catch (IOException e) {
@@ -81,14 +91,6 @@ public class MessagesSession extends Thread {
 	}
 
 	public void run() {
-		try {
-			reader = new MessagesReader (connection.getInputStream(),listener);
-			writer = new MessagesWriter (connection.getOutputStream());
-			writer.connect();
-			writer.send();
-		}
-		catch (IOException e) {
-		}
 		while (true) {
 			if (! operate())
 				break;

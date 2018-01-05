@@ -83,14 +83,14 @@ public class CommandSession {
 		}
 	}
 
-	public int[] install(String name, String os, List<App> apps, List<Client> clients) {
+	public boolean install(String name, String os, List<App> apps, List<Client> clients) {
 		try {
 			writer.install(name,os,apps,clients);
 			writer.send();
 			reader.receive();
-			return new int[]{reader.getNbFiles(),reader.getNbEchecs()};
+			return reader.getDone();
 		} catch (Exception e) {
-			return null;
+			return false;
 		}
 	}
 

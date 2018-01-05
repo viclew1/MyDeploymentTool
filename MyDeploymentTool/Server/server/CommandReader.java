@@ -11,7 +11,7 @@ import common.Reader;
 
 public class CommandReader extends Reader{
 
-	private String name,dest,os;
+	private String name,dest,dir;
 	private int x1,y1,x2,y2;
 	private boolean startResearch;
 	private List<String> files,dests;
@@ -42,14 +42,14 @@ public class CommandReader extends Reader{
 			break;
 		case Protocol.RQ_APPS:
 			name=readString();
-			os=readString();
+			dir=readString();
 			break;
 		case Protocol.RQ_DIR_NAMES:
 			name=readString();
 			break;
 		case Protocol.RQ_INSTALL:
 			name=readString();
-			os=readString();
+			dir=readString();
 			files=new ArrayList<String>();
 			dests=new ArrayList<String>();
 			int nbFiles=readInt();
@@ -105,8 +105,8 @@ public class CommandReader extends Reader{
 		return startResearch;
 	}
 
-	public String getOS() {
-		return os;
+	public String getDir() {
+		return dir;
 	}
 	
 	public List<String> getFiles(){

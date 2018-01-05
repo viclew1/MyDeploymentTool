@@ -51,13 +51,14 @@ public class CommandSession extends Thread{
 					writer.clients(listener.processUsers(reader.getName()));
 					break;
 				case Protocol.RQ_APPS:
-					writer.apps(listener.processApps(reader.getName(),reader.getOS()));
+					writer.apps(listener.processApps(reader.getName(),reader.getDir()));
 					break;
 				case Protocol.RQ_DIR_NAMES:
 					writer.dirs(listener.processDirs(reader.getName()));
 					break;
 				case Protocol.RQ_INSTALL:
-					writer.installResult(reader.getDests().size(),reader.getFiles().size(),listener.processInstall(reader.getName(), reader.getOS(), reader.getFiles(),reader.getDests()));
+					listener.processInstall(reader.getName(), reader.getDir(), reader.getFiles(),reader.getDests());
+					writer.ok();
 					break;
 				case Protocol.RQ_CONTROL:
 					if (listener.takeControl(reader.getName(),reader.getDest()))
@@ -100,6 +101,11 @@ public class CommandSession extends Thread{
 		} catch (IOException e) {
 		}
 		connection = null;
+	}
+
+	public boolean isSocketOk()
+	{
+		return !(connection==null || connection.isClosed());
 	}
 
 }

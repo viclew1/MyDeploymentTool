@@ -37,7 +37,7 @@ public class CommandReader extends Reader {
 			int nbCli=readInt();
 			clients=new ArrayList<Client>();
 			for (int i=0;i<nbCli;i++)
-				clients.add(new Client(readString(), readString()));
+				clients.add(new Client(readString(), readString(), readBoolean(), readBoolean()));
 			break;
 		case Protocol.RP_APPS:
 			int nbApps=readInt();

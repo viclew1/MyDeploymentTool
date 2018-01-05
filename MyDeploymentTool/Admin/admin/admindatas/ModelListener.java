@@ -13,17 +13,13 @@ public interface ModelListener {
     
     public void updateStatus (String status);
     
-	public void updateClients();
+	public void updateClients(boolean autoUpdate);
 
 	public void updateApps();
 	
 	public void updateDirs();
 
 	public void updateInstall(String status);
-
-	public void loading();
-
-	public void stopLoading();
 
 	public void exit();
 

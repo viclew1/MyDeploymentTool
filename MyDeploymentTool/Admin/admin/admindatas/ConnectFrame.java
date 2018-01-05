@@ -12,6 +12,7 @@ import common.Protocol;
  *
  * @author vicle
  */
+@SuppressWarnings("serial")
 public class ConnectFrame extends javax.swing.JFrame {
 
 	

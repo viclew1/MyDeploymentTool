@@ -2,7 +2,9 @@ package admin;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
+import admin.admindatas.Client;
 import common.Protocol;
 
 
@@ -36,6 +38,15 @@ public class MessagesSession extends Thread {
 		this.close();
 		try {
 			connection = new Socket(Protocol.IPSERV, Protocol.MESSAGE_PORT);
+			try {
+				writer = new MessagesWriter (connection.getOutputStream());
+				reader = new MessagesReader (connection.getInputStream());
+				writer.connect(name);
+				writer.send();
+				reader.receive();
+			}
+			catch (IOException e) {
+			}
 			start ();
 			return true;
 		} catch (IOException e) {
@@ -55,6 +66,10 @@ public class MessagesSession extends Thread {
 				break;
 			case Protocol.RP_CONTROL:
 				listener.updateControl(reader.getClientAddr(),reader.getImg());
+				break;
+			case Protocol.RP_CLIENTS:
+				listener.updateClientsList(reader.getUsers(), true);
+				break;
 			default:
 				break;
 			}
@@ -66,14 +81,6 @@ public class MessagesSession extends Thread {
 	}
 
 	public void run() {
-		try {
-			writer = new MessagesWriter (connection.getOutputStream());
-			reader = new MessagesReader (connection.getInputStream());
-			writer.connect(name);
-			writer.send();
-		}
-		catch (IOException e) {
-		}
 		while (true) {
 			if (! operate())
 				break;

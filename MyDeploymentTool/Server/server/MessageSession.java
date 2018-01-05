@@ -4,8 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 import common.Protocol;
+import server.serverdatas.Client;
 
 public class MessageSession {
 
@@ -40,19 +42,28 @@ public class MessageSession {
 				switch (reader.getType()) {
 				case Protocol.RQ_CONNECT_ADMIN:
 					listener.connectMessagesAdmin(reader.getUserName(), this);
+					writer.ok();
 					break;
 				case Protocol.RQ_CONNECT:
 					listener.connectMessagesUser(connection.getInetAddress().getHostName(), connection.getInetAddress().getHostAddress(), this);
+					writer.ok();
 					break;
 				default:
 					break;
 				}
+				writer.send();
 				return false;
 			}
 		}
 		catch (Exception e) {
 		}
 		return false;
+	}
+	
+	public void dispatchClients(List<Client> clients)
+	{
+		writer.clients(clients);
+		writer.send();
 	}
 
 	public boolean dispatchFile (String path, String fileName) {
@@ -108,5 +119,10 @@ public class MessageSession {
 		}
 		catch (Exception e) {
 		}
+	}
+
+	public boolean isSocketOk()
+	{
+		return !(connection==null || connection.isClosed());
 	}
 }

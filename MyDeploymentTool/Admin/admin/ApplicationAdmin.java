@@ -19,16 +19,22 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 	public void lookForClients() {
 		if (model.isConnected()) {
 			List<Client> clients=command.doGetUsers(model.getName());
-			model.getClients().clear();
-			for (int i=0;i<clients.size();i++)
-				model.getClients().add(clients.get(i));
-			gui.updateClients();
-
+			updateClientsList(clients, false);
 		} else {
 			updateInfo("Cette opération nécessite d'être connecté.");
 		}
 	}
 
+
+	@Override
+	public void updateClientsList(List<Client> clients, boolean autoUpdate)
+	{
+		model.getClients().clear();
+		for (int i=0;i<clients.size();i++)
+			model.getClients().add(clients.get(i));
+		if (gui != null)
+			gui.updateClients(autoUpdate);		
+	}
 
 	public void start () {
 		model = new Model ();
@@ -93,7 +99,7 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 			updateInfo("Cette opération nécessite d'être connecté.");
 		}
 	}
-	
+
 	@Override
 	public void requestDirNames() {
 		if (model.isConnected()) {
@@ -107,21 +113,18 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 
 
 	@Override
-	public void requestInstall(String os, List<App> apps, List<Client> clients)
+	public void requestInstall(String dir, List<App> apps, List<Client> clients)
 	{
 		if (model.isConnected()) 
 		{
-			gui.loading();
-			int[] result=command.install(model.getName(),os,apps,clients);
-			if (result!=null)
+			boolean result=command.install(model.getName(),dir,apps,clients);
+			if (result)
 			{
-				gui.stopLoading();
-				gui.updateInstall("Installation finie. ("+(result[0]-result[1])+"/"+result[0]+")");
+				gui.updateInstall("Requête d'installation réussie.");
 			}
 			else
 			{
-				gui.stopLoading();
-				updateInfo("Installation échouée.");
+				updateInfo("Requête d'installation échouée.");
 			}
 		} else {
 			updateInfo("Cette opération nécessite d'être connecté.");
@@ -138,22 +141,18 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 	@Override
 	public void requestControl(Client client) {
 		if (model.isConnected()) {
-			gui.loading();
 			if (model.getControlFrame(client.getAddress())!=null)
 			{
-				gui.stopLoading();
 				updateInfo("Prise en main de "+client.getName()+" déjà en cours.");
 			}
 			else if (command.doControl(model.getName(), client.getAddress()))
 			{
 				model.getControlFrames().add(new ControlGUI(this, client));
 				model.getControlFrame(client.getAddress()).setVisible(true);
-				gui.stopLoading();
 				updateInfo("Prise en main de "+client.getName()+" réussie.");
 			}
 			else
 			{
-				gui.stopLoading();
 				updateInfo("Prise en main de "+client.getName()+" échouée.");
 			}
 		} 
@@ -166,13 +165,9 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 
 	@Override
 	public void updateControl(String clientAddr, BufferedImage img) {
-		try {
-			ControlGUI cg=model.getControlFrame(clientAddr);
-			if (cg!=null)
-				cg.updateImg(img);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		ControlGUI cg=model.getControlFrame(clientAddr);
+		if (cg!=null)
+			cg.updateImg(img);
 	}
 
 

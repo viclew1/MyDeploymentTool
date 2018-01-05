@@ -14,8 +14,9 @@ public class MessagesReader extends Reader {
 		super(inputStream);
 		this.listener=listener;
 	}
-
+	
 	private NetworkListener listener;
+	private FileOutputStream fos;
 	private boolean done;
 	private String admin;
 
@@ -49,7 +50,7 @@ public class MessagesReader extends Reader {
 		String fileName=readString();
 		File f=new File(destFolder+fileName);
 		f.createNewFile();
-		FileOutputStream fos = new FileOutputStream(f);
+		fos = new FileOutputStream(f);
 
 		double totalSize=readLong();
 		int nbPacket=readInt();
@@ -109,6 +110,21 @@ public class MessagesReader extends Reader {
 
 	public String getAdmin() {
 		return admin;
+	}
+
+	public void closeAll()
+	{
+		if (fos != null)
+		{
+			try
+			{
+				fos.close();
+				fos = null;
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 
