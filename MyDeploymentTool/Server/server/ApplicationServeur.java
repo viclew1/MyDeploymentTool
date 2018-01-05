@@ -21,8 +21,40 @@ public class ApplicationServeur implements NetworkListener
 
 	public static void main(String[] args) 
 	{
+		for (String arg : args)
+		{
+			switch (arg)
+			{
+			case "-d":
+				DEBUG = true;
+				break;
+			case "-h":
+				displayHelp();
+				System.exit(0);
+				break;
+			default:
+				System.out.println("Argument : " + arg + " inconnu. Consultez l'aide.");
+				displayHelp();
+				System.exit(0);
+				break;
+			}
+		}
 		ApplicationServeur m = new ApplicationServeur ();
+		displayStart();
 		m.start();
+	}
+	
+	public static void displayStart()
+	{
+		System.out.println("MyDeploymentTool SERVER STARTING");
+	}
+	
+	public static void displayHelp()
+	{
+		System.out.println("MyDeploymentTool HELP");
+		System.out.println("Arguments : ");
+		System.out.println("    -d  : mode debug");
+		System.out.println("    -h  : aide");
 	}
 
 	public void start () 
