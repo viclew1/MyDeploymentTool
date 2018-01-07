@@ -1,16 +1,19 @@
 package server;
 
+import static server.serverdatas.Constantes.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
+
 import server.serverdatas.App;
 import server.serverdatas.Client;
-import server.serverdatas.Model;
 import server.serverdatas.InstallOrder;
-import static server.serverdatas.Constantes.*;
+import server.serverdatas.Model;
 
 public class ApplicationServeur implements NetworkListener 
 {
+	private static Preferences pref =  Preferences.userNodeForPackage( ApplicationServeur.class );
 	private CommandServer commands = null;
 	private MessageServer message = null;
 	private Pusher pusher = null;
@@ -18,7 +21,6 @@ public class ApplicationServeur implements NetworkListener
 
 	public static void main(String[] args) 
 	{
-		args = new String[] {"-d"};
 		for (int i = 0 ; i < args.length ; i++)
 		{
 			String arg = args[i];
@@ -39,6 +41,13 @@ public class ApplicationServeur implements NetworkListener
 					System.exit(0);
 				}
 				String chemin = args[i+1];
+				File f = new File(chemin);
+				if (!f.exists() || !f.isDirectory())
+				{
+					System.out.println("Chemin invalide.");
+					displayHelp();
+					System.exit(0);
+				}
 				pref.put("SERVER_PATH", chemin); 
 				i++;
 				break;
@@ -50,17 +59,14 @@ public class ApplicationServeur implements NetworkListener
 			}
 		}
 
-		String dir = pref.get("SERVER_PATH", null);
-		if (dir != null)
+		String dir = pref.get("SERVER_PATH", SERVER_PATH);
+		SERVER_PATH = dir;
+		SRV_FILE = new File(dir);
+		if (!SRV_FILE.exists() || !SRV_FILE.isDirectory())
 		{
-			SERVER_PATH = dir;
-			SRV_FILE = new File(dir);
-			if (!SRV_FILE.exists() || !SRV_FILE.isDirectory())
-			{
-				System.out.println("Chemin invalide.");
-				displayHelp();
-				System.exit(0);
-			}
+			System.out.println("Chemin invalide.");
+			displayHelp();
+			System.exit(0);
 		}
 
 		ApplicationServeur m = new ApplicationServeur ();
@@ -75,11 +81,12 @@ public class ApplicationServeur implements NetworkListener
 
 	public static void displayHelp()
 	{
-		System.out.println("MyDeploymentTool HELP");
+		System.out.println("\nMyDeploymentTool HELP\n");
 		System.out.println("Arguments : ");
 		System.out.println("    -d  : mode debug");
 		System.out.println("    -h  : aide");
 		System.out.println("    -s chemin_dossier : sélectionner un répertoire qui sera votre serveur");
+		System.out.println("    Chemin par défaut actuel : " + pref.get("SERVER_PATH", SERVER_PATH));
 	}
 
 	public void start () 
