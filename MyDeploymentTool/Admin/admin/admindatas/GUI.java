@@ -31,7 +31,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 
 	private GUIListener listener;
 	private Model model;
-	
+
 	/**
 	 * Creates new form GUI
 	 */
@@ -102,12 +102,12 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 	public void updateStatus (final String status) {
 		if (status == null) {
 			this.status.setText("");
-		} else {
-			{
-				this.status.setText(status);
-				installInfosPanel.add(new LogUI(status));
-				jScrollPane3.getVerticalScrollBar().setValue(jScrollPane3.getVerticalScrollBar().getMaximum());
-			}
+		} 
+		else 
+		{
+			this.status.setText(status);
+			installInfosPanel.add(new LogUI(status));
+			jScrollPane3.getVerticalScrollBar().setValue(jScrollPane3.getVerticalScrollBar().getMaximum());
 		}
 	}
 
@@ -334,12 +334,12 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 		if (listener != null) {
 			new Thread () {
 				public void run () {
-					if (model.getSelectedClients().size()!=1)
+					if (model.getSelectedClients().isEmpty())
 					{
-						updateStatus("Cette opération nécessite de sélectionner un client.");
+						updateStatus("Cette opération nécessite de sélectionner au moins un client.");
 						return;
 					}
-					listener.requestControl(model.getSelectedClients().get(0));
+					listener.requestControl(model.getSelectedClients());
 				}
 			}.start();
 		}
@@ -522,7 +522,7 @@ public class GUI extends javax.swing.JFrame implements ModelListener {
 
 				for (Client c : clients)
 					PCShowPanel.add(new ClientUI(c));
-				
+
 				PCShowPanel.repaint();
 				PCShowPanel.revalidate();
 				PCPanel.repaint();

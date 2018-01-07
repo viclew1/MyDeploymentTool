@@ -1,6 +1,5 @@
 package server;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
@@ -91,24 +90,15 @@ public class MessageSession {
 		}
 	}
 
-	public boolean requestControl(String name) {
+	public boolean requestControl(String adminIp) {
 		try {
-			writer.doRequestControl(name);
+			writer.doRequestControl(adminIp);
 			writer.send();
 			reader.receive();
 			return reader.getDone();
 		}
 		catch (Exception e) {
 			return false;
-		}
-	}
-
-	public void updateControll(String addr, BufferedImage img) {
-		try {
-			writer.doUpdateControl(addr,img);
-			writer.send();
-		}
-		catch (Exception e) {
 		}
 	}
 

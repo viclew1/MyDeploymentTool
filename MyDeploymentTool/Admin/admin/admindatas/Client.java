@@ -6,14 +6,16 @@ public class Client {
 	private String name,address;
 	private boolean busy;
 	private boolean connected;
+	private boolean controlled;
     private boolean selected = false;
 	
-	public Client(String name, String address, boolean busy, boolean connected)
+	public Client(String name, String address, boolean busy, boolean controlled, boolean connected)
 	{
 		this.name = name;
 		this.address = address;
 		this.busy = busy;
 		this.connected = connected;
+		this.controlled = controlled;
 	}
 	
 	public String getName()
@@ -38,6 +40,11 @@ public class Client {
 		return busy;
 	}
 
+	public boolean isControlled()
+	{
+		return controlled;
+	}
+	
 	public boolean isConnected()
 	{
 		return connected;

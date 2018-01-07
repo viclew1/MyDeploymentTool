@@ -20,7 +20,7 @@ public interface GUIListener {
 
 	public void requestInstall(String dir, List<App> apps, List<Client> clients);
 
-	public void requestControl(Client client);
+	public void requestControl(List<Client> clients);
 
 	public void requestDirNames();
 	

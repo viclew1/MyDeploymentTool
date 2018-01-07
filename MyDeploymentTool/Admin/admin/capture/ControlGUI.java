@@ -1,4 +1,4 @@
-package admin.admindatas;
+package admin.capture;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -8,6 +8,9 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import admin.admindatas.Client;
+import admin.admindatas.ControlListener;
 
 public class ControlGUI extends JFrame
 {

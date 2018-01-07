@@ -1,6 +1,5 @@
 package server;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,6 +29,7 @@ public class MessageWriter extends Writer{
 			writeString(clients.get(i).getName());
 			writeString(clients.get(i).getAddress());
 			writeBoolean(clients.get(i).isBusy());
+			writeBoolean(clients.get(i).isControlled());
 			writeBoolean(clients.get(i).isConnected());
 		}
 	}
@@ -104,15 +104,9 @@ public class MessageWriter extends Writer{
 		writeString(info);
 	}
 
-	public void doRequestControl(String name) {
+	public void doRequestControl(String adminIp) {
 		writeInt(Protocol.RQ_CONTROL);
-		writeString(name);
-	}
-
-	public void doUpdateControl(String addr, BufferedImage img) throws IOException {
-		writeInt(Protocol.RP_CONTROL);
-		writeString(addr);
-		writeBufferedImage(img);
+		writeString(adminIp);
 	}
 
 	public void doStopControl() {

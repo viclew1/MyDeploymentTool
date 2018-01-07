@@ -23,7 +23,7 @@ public class Model {
         this.connected = connected;
     }
 
-	public boolean getControlled() {
+	public boolean isControlled() {
 		return controlled;
 	}
 	

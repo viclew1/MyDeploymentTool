@@ -99,7 +99,7 @@ public class CommandSession {
 			writer.control(name,address);
 			writer.send();
 			reader.receive();
-			return true;
+			return reader.getDone();
 		} catch (Exception e) {
 			return false;
 		}

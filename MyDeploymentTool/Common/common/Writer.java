@@ -27,7 +27,6 @@ public class Writer {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write( img, "jpg", baos );
-			baos.flush();
 			byte[] imageInByte = baos.toByteArray();
 			baos.close();
 			writeByteArray(imageInByte, imageInByte.length);

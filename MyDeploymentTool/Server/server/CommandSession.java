@@ -9,6 +9,8 @@ public class CommandSession extends Thread{
 
 	private Socket connection;
 	private NetworkListener listener;
+	private CommandWriter writer;
+	private CommandReader reader;
 
 	public CommandSession(Socket connection, NetworkListener listener) {
 		this.connection = connection;
@@ -18,8 +20,6 @@ public class CommandSession extends Thread{
 
 	public boolean operate() {
 		try {
-			CommandWriter writer = new CommandWriter (connection.getOutputStream());
-			CommandReader reader = new CommandReader (connection.getInputStream());
 
 			while (true)
 			{
@@ -61,16 +61,13 @@ public class CommandSession extends Thread{
 					writer.ok();
 					break;
 				case Protocol.RQ_CONTROL:
-					if (listener.takeControl(reader.getName(),reader.getDest()))
+					if (listener.takeControl(connection.getInetAddress().getHostAddress(), reader.getName(),reader.getDest()))
 						writer.ok();
 					else
 						writer.ko();
 					break;
 				case Protocol.RQ_STOP_CONTROL:
 					listener.stopControl(reader.getName(),reader.getDest());
-					break;
-				case Protocol.RP_CONTROL:
-					listener.sendCapture(connection.getInetAddress().getHostAddress(),reader.getName(), reader.getImg());
 					break;
 				case -1 : break;
 				default: return false;
@@ -83,11 +80,13 @@ public class CommandSession extends Thread{
 	}
 
 	public void run() {
-		while (true) {
-			if (! operate())
-				break;
-		}
 		try {
+			writer = new CommandWriter (connection.getOutputStream());
+			reader = new CommandReader (connection.getInputStream());
+			while (true) {
+				if (! operate())
+					break;
+			}
 			if (connection != null) connection.close();
 		} catch (IOException e) {
 		}

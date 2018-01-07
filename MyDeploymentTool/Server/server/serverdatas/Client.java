@@ -11,10 +11,12 @@ public class Client {
 
 	private final String name,address;
 	private boolean processing = false;
+	private boolean controlled = false;
 	private CommandSession commandSession;
 	private MessageSession messageSession;
 	private final List<InstallOrder> todoList;
 	private final List<InstallOrder> doneList;
+	private final List<Client> controls;
 
 
 	public Client(String name, String address)
@@ -23,6 +25,7 @@ public class Client {
 		this.address=address;
 		this.todoList = new ArrayList<InstallOrder>();
 		this.doneList = new ArrayList<InstallOrder>();
+		this.controls = new ArrayList<Client>();
 	}
 
 	public String getName()
@@ -56,6 +59,29 @@ public class Client {
 		}).start();
 	}
 
+	public void takeControl(Client client)
+	{
+		controls.add(client);
+	}
+
+	public boolean doesControl(Client client)
+	{
+		for (Client c : controls)
+			if (c == client)
+				return true;
+		return false;
+	}
+
+	public void stopControl(Client client)
+	{
+		controls.remove(client);
+	}
+
+	public void stopAllControl()
+	{
+		controls.clear();
+	}
+	
 	public void addOrder(InstallOrder order)
 	{
 		todoList.add(order);
@@ -63,7 +89,7 @@ public class Client {
 
 	public boolean processOrder(InstallOrder order)
 	{
-		return messageSession.dispatchFile(SERVER+order.getOs()+"/", order.getFileName());
+		return messageSession.dispatchFile(SERVER_PATH+order.getOs()+"/", order.getFileName());
 	}
 
 	public CommandSession getCommandSession()
@@ -89,7 +115,7 @@ public class Client {
 	public boolean isConnected() {
 		return commandSession != null;
 	}
-	
+
 	public boolean isMessageConnected() {
 		return messageSession != null;
 	}
@@ -101,5 +127,15 @@ public class Client {
 	public boolean isBusy()
 	{
 		return !todoList.isEmpty();
+	}
+
+	public void setControlled(boolean controlled)
+	{
+		this.controlled = controlled;
+	}
+
+	public boolean isControlled()
+	{
+		return this.controlled;
 	}
 }

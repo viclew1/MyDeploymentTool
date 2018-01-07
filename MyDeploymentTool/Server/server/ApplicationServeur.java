@@ -1,10 +1,8 @@
 package server;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import server.serverdatas.App;
 import server.serverdatas.Client;
 import server.serverdatas.Model;
@@ -13,7 +11,6 @@ import static server.serverdatas.Constantes.*;
 
 public class ApplicationServeur implements NetworkListener 
 {
-
 	private CommandServer commands = null;
 	private MessageServer message = null;
 	private Pusher pusher = null;
@@ -21,8 +18,10 @@ public class ApplicationServeur implements NetworkListener
 
 	public static void main(String[] args) 
 	{
-		for (String arg : args)
+		args = new String[] {"-d"};
+		for (int i = 0 ; i < args.length ; i++)
 		{
+			String arg = args[i];
 			switch (arg)
 			{
 			case "-d":
@@ -32,6 +31,17 @@ public class ApplicationServeur implements NetworkListener
 				displayHelp();
 				System.exit(0);
 				break;
+			case "-s":
+				if (args.length<=i+1)
+				{
+					System.out.println("Veuillez spécifier un chemin.");
+					displayHelp();
+					System.exit(0);
+				}
+				String chemin = args[i+1];
+				pref.put("SERVER_PATH", chemin); 
+				i++;
+				break;
 			default:
 				System.out.println("Argument : " + arg + " inconnu. Consultez l'aide.");
 				displayHelp();
@@ -39,22 +49,37 @@ public class ApplicationServeur implements NetworkListener
 				break;
 			}
 		}
+
+		String dir = pref.get("SERVER_PATH", null);
+		if (dir != null)
+		{
+			SERVER_PATH = dir;
+			SRV_FILE = new File(dir);
+			if (!SRV_FILE.exists() || !SRV_FILE.isDirectory())
+			{
+				System.out.println("Chemin invalide.");
+				displayHelp();
+				System.exit(0);
+			}
+		}
+
 		ApplicationServeur m = new ApplicationServeur ();
 		displayStart();
 		m.start();
 	}
-	
+
 	public static void displayStart()
 	{
-		System.out.println("MyDeploymentTool SERVER STARTING");
+		System.out.println("MyDeploymentTool SERVER STARTING - " + SERVER_PATH);
 	}
-	
+
 	public static void displayHelp()
 	{
 		System.out.println("MyDeploymentTool HELP");
 		System.out.println("Arguments : ");
 		System.out.println("    -d  : mode debug");
 		System.out.println("    -h  : aide");
+		System.out.println("    -s chemin_dossier : sélectionner un répertoire qui sera votre serveur");
 	}
 
 	public void start () 
@@ -204,6 +229,7 @@ public class ApplicationServeur implements NetworkListener
 		}
 		client.setCommandSession(null);
 		client.setMessageSession(null);
+		client.setControlled(false);
 		if (DEBUG) System.out.println("USER : DISCONNECTION SUCCESS\n");
 		return true;
 	}
@@ -225,6 +251,7 @@ public class ApplicationServeur implements NetworkListener
 		}
 		admin.setCommandSession(null);
 		admin.setMessageSession(null);
+		admin.stopAllControl();
 		if (DEBUG) System.out.println("ADMIN : DISCONNECTION SUCCESS\n");
 		return true;
 	}
@@ -245,7 +272,7 @@ public class ApplicationServeur implements NetworkListener
 			return new ArrayList<>();
 		}
 		List<App> apps=new ArrayList<App>();
-		File dossier=new File(SERVER+dir);
+		File dossier=new File(SERVER_PATH+dir);
 		if (!dossier.getAbsolutePath().startsWith(SRV_FILE.getAbsolutePath()))
 			return apps;
 		for (File f : dossier.listFiles())
@@ -270,7 +297,7 @@ public class ApplicationServeur implements NetworkListener
 			return new ArrayList<>();
 		}
 		List<String> dirs=new ArrayList<String>();
-		File dossier=new File(SERVER);
+		File dossier=new File(SERVER_PATH);
 		for (File f : dossier.listFiles())
 			dirs.add(f.getName());
 		if (DEBUG) System.out.println("ADMIN : PROCESS DIRS SUCCESS\n");
@@ -348,13 +375,13 @@ public class ApplicationServeur implements NetworkListener
 			if (DEBUG) System.out.println("USER is not connected, REQUEST FAILED\n");
 			return false;
 		}
-		boolean ok = client.getMessageSession().dispatchFile(SERVER+dir+"/", fileName);
+		boolean ok = client.getMessageSession().dispatchFile(SERVER_PATH+dir+"/", fileName);
 		if (DEBUG) System.out.println("SERVER : DISPATCH APP SUCCESS\n");
 		return ok;
 	}
 
 	@Override
-	public boolean takeControl(String name, String dest) 
+	public boolean takeControl(String adminIp, String name, String dest) 
 	{
 		if (DEBUG) System.out.println("Treating control order from ADMIN : " + name);
 		Client admin = model.getAdmin(name);
@@ -379,39 +406,25 @@ public class ApplicationServeur implements NetworkListener
 			if (DEBUG) System.out.println("USER is not connected, REQUEST FAILED\n");
 			return false;
 		}
-		boolean ok = client.getMessageSession().requestControl(name);
-		if (DEBUG) System.out.println("SERVER : TAKE CONTROLL SUCCESS\n");
+		if (client.isControlled()) 
+		{
+			if (DEBUG) System.out.println("USER is already controlled, REQUEST FAILED\n");
+			return false;
+		}
+		if (admin.doesControl(client)) 
+		{
+			if (DEBUG) System.out.println("ADMIN already controls USER, REQUEST FAILED\n");
+			return false;
+		}
+		boolean ok = client.getMessageSession().requestControl(adminIp);
+		if (ok)
+		{
+			admin.takeControl(client);
+			client.setControlled(true);
+			if (DEBUG)  System.out.println("SERVER : TAKE CONTROL SUCCESS\n");
+		}
+		if (DEBUG && !ok) System.out.println("SERVER : TAKE CONTROL FAILED\n");
 		return ok;
-	}
-
-	@Override
-	public void sendCapture(String addr, String adminName, BufferedImage img) 
-	{
-		if (DEBUG) System.out.println("Treating capture sending from USER : " + addr + " to ADMIN : " + adminName);
-		Client admin = model.getAdmin(adminName);
-		if (admin == null) 
-		{
-			if (DEBUG) System.out.println("ADMIN does not exist, REQUEST FAILED\n");
-			return;
-		}
-		if (! admin.isConnected()) 
-		{
-			if (DEBUG) System.out.println("ADMIN is not connected, REQUEST FAILED\n");
-			return;
-		}
-		Client client=model.getClient(addr);
-		if (client == null) 
-		{
-			if (DEBUG) System.out.println("USER does not exist, REQUEST FAILED\n");
-			return;
-		}
-		if (!client.isConnected()) 
-		{
-			if (DEBUG) System.out.println("USER is not connected, REQUEST FAILED\n");
-			return;
-		}
-		admin.getMessageSession().updateControll(addr,img);
-		if (DEBUG) System.out.println("SERVER : SEND CAPTURE SUCCESS\n");
 	}
 
 	@Override
@@ -424,7 +437,7 @@ public class ApplicationServeur implements NetworkListener
 			if (DEBUG) System.out.println("ADMIN does not exist, REQUEST FAILED\n");
 			return;
 		}
-		if (! admin.isConnected()) 
+		if (!admin.isConnected()) 
 		{
 			if (DEBUG) System.out.println("ADMIN is not connected, REQUEST FAILED\n");
 			return;
@@ -440,7 +453,19 @@ public class ApplicationServeur implements NetworkListener
 			if (DEBUG) System.out.println("USER is not connected, REQUEST FAILED\n");
 			return;
 		}
+		if (!client.isControlled()) 
+		{
+			if (DEBUG) System.out.println("USER is not controlled, REQUEST FAILED\n");
+			return;
+		}
+		if (!admin.doesControl(client)) 
+		{
+			if (DEBUG) System.out.println("ADMIN does not control USER, REQUEST FAILED\n");
+			return;
+		}
 		client.getMessageSession().stopControl();
+		admin.stopControl(client);
+		client.setControlled(false);
 		if (DEBUG) System.out.println("SERVER : STOP CONTROL SUCCESS\n");
 	}
 
@@ -464,7 +489,7 @@ public class ApplicationServeur implements NetworkListener
 		for (Client admin : model.getAdmins())
 			if (admin.isConnected() || admin.isMessageConnected())
 				if (!admin.getCommandSession().isSocketOk())
-					disconnectAdmin(admin.getAddress());
+					disconnectAdmin(admin.getName());
 	}
 
 

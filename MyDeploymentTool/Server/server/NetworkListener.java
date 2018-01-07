@@ -1,6 +1,5 @@
 package server;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 import server.serverdatas.App;
@@ -20,8 +19,7 @@ public interface NetworkListener {
 	void processInstall(String name, String os, List<String> files, List<String> dests);
 	boolean dispatchApp(Client client, String dir, String fileName);
 	void dispatchInfos(String name, String info);
-	boolean takeControl(String name, String dest);
-	void sendCapture(String name, String admin, BufferedImage bufferedImage);
+	boolean takeControl(String adminIp, String name, String dest);
 	void stopControl(String name, String dest);
 	void processOrders();
 	void processClients();

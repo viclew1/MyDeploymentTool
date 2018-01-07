@@ -71,8 +71,10 @@ public class MessagesSession extends Thread {
 			case Protocol.RQ_CONTROL:
 				if (!listener.isControlled())
 				{
-					writer.ok();
-					listener.processControl(reader.getAdmin());
+					if (listener.processControl(reader.getAdmin())) 
+						writer.ok();
+					else 
+						writer.ko();
 				}
 				else writer.ko();
 				break;

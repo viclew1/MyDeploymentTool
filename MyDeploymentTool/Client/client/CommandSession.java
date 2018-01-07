@@ -1,12 +1,12 @@
 package client;
 
-import java.awt.image.BufferedImage;
 import java.net.Socket;
 
 import common.Protocol;
 
 
-public class CommandSession {
+public class CommandSession 
+{
 
 	private Socket connection;
 	
@@ -62,15 +62,4 @@ public class CommandSession {
 			return false;
 		}
 	}
-
-	public void sendImage(String admin, BufferedImage img) {
-		try {
-			writer.control(admin,img);
-			writer.send();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
 }

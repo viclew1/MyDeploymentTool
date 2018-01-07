@@ -1,10 +1,10 @@
 package common;
 
-
 public abstract class Protocol {
 	
-	public static final int COMMAND_PORT=9896;
-	public static final int MESSAGE_PORT=9895;
+	public static final int COMMAND_PORT = 9896;
+	public static final int MESSAGE_PORT = 9895;
+	public static final int CAPTURE_PORT = 9894;
 
 	public static final int RQ_CONNECT_ADMIN = 101;
 	public static final int RQ_DISCONNECT_ADMIN = 104;

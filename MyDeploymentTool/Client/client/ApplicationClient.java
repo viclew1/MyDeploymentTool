@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import client.capture.CaptureSession;
 import client.clientdatas.ClientFrame;
 import client.clientdatas.Icons;
 import client.clientdatas.Model;
@@ -23,6 +24,7 @@ public class ApplicationClient implements NetworkListener {
 
 	private CommandSession command;
 	private MessagesSession messages;
+	private CaptureSession capture;
 	private Model model;
 	private ClientFrame clientFrame;
 
@@ -49,7 +51,7 @@ public class ApplicationClient implements NetworkListener {
 			command = new CommandSession();
 			command.open();
 			if (command.doConnect (name)) {
-				messages = new MessagesSession(ApplicationClient.this);
+				messages = new MessagesSession(this);
 				messages.open();
 				model.setConnected (true);
 				clientFrame.updateStatus("Connexion réussie.");
@@ -99,44 +101,85 @@ public class ApplicationClient implements NetworkListener {
 	}
 
 
+	private static final int BUFFER_SIZE = 20;
+	private BufferedImage[] imageBuffer = new BufferedImage[BUFFER_SIZE];
+	private int index = 0;
+	private int lastScreenshotIndex = 0;
+	private boolean captureTaken = false;
+
 	@Override
-	public void processControl(String admin) {
+	public boolean processControl(String adminIp) 
+	{
+		capture = new CaptureSession();
+		if (!capture.open(adminIp))
+			return false;
 		model.setControlled(true);
-		new Thread(new Runnable() {
+		new Thread(new Runnable() 
+		{
 
 			@Override
-			public void run() {
-
-				try {
-					GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-					int width = gd.getDisplayMode().getWidth();
-					int height = gd.getDisplayMode().getHeight();
-					Rectangle r=new Rectangle(0, 0, (int)width, (int)height);
-					Robot rob=new Robot();
-					Point pointer;
-					int xMouse, yMouse;
-					while (model.getControlled())
-					{
-						final BufferedImage img=rob.createScreenCapture(r);
-						pointer = MouseInfo.getPointerInfo().getLocation();
-						xMouse = (int) pointer.getX();
-						yMouse = (int) pointer.getY();
-						img.getGraphics().drawImage(Icons.MOUSE_IMAGE, xMouse, yMouse, 16, 24, null);
-						command.sendImage(admin,img);
-					}
-				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+			public void run() 
+			{
+				GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+				int width = gd.getDisplayMode().getWidth();
+				int height = gd.getDisplayMode().getHeight();
+				Rectangle r=new Rectangle(0, 0, (int)width, (int)height);
+				Robot rob = null;
+				try
+				{
+					rob = new Robot();
+				} catch (AWTException e)
+				{
 					e.printStackTrace();
+				}
+				Point pointer;
+				int xMouse, yMouse;
+
+				new Thread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						while (model.isControlled())
+						{
+							if (captureTaken)
+							{
+								captureTaken = false;
+								if (!capture.sendImage(imageBuffer[lastScreenshotIndex]))
+									model.setControlled(false);
+							} 
+							else
+								try {
+									Thread.sleep(1);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+						}
+					}
+				}).start();
+
+				while (model.isControlled())
+				{
+					BufferedImage newCapture = rob.createScreenCapture(r);
+					pointer = MouseInfo.getPointerInfo().getLocation();
+					xMouse = (int) pointer.getX();
+					yMouse = (int) pointer.getY();
+					newCapture.getGraphics().drawImage(Icons.MOUSE_IMAGE, xMouse, yMouse, 16, 24, null);
+					imageBuffer[index] = newCapture;
+					lastScreenshotIndex = index;
+					captureTaken = true;
+					index++;
+					if (index == BUFFER_SIZE) index = 0;
 				}
 			}
 		}).start();
-
+		return true;
 	}
 
 
 	@Override
 	public boolean isControlled() {
-		return model.getControlled();
+		return model.isControlled();
 	}
 
 
@@ -155,6 +198,11 @@ public class ApplicationClient implements NetworkListener {
 			command = null;
 			messages.close();
 			messages = null;
+			if (capture != null)
+			{
+				capture.close();
+				capture = null;
+			}
 			model.setConnected (false);
 		}
 		clientFrame.updateStatus("Déconnecté.");

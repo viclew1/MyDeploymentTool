@@ -1,15 +1,23 @@
 package admin;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.List;
 
-import admin.admindatas.*;
+import admin.admindatas.App;
+import admin.admindatas.Client;
+import admin.admindatas.ConnectFrame;
+import admin.admindatas.ControlListener;
+import admin.admindatas.GUI;
+import admin.admindatas.Model;
+import admin.admindatas.ModelListener;
+import admin.capture.CaptureServer;
+import admin.capture.ControlGUI;
 
 
 public class ApplicationAdmin implements NetworkListener, GUIListener, ControlListener {
 
 	private CommandSession command;
 	private MessagesSession messages;
+	private CaptureServer captures;
 	private Model model;
 	private ModelListener gui;
 	private ConnectFrame connectFrame;
@@ -62,6 +70,8 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 			messages.close();
 			messages = null;
 			model.setConnected (false);
+			captures.close();
+			captures = null;
 			connectFrame.updateStatus(model.getName()+" est déconnecté.");
 			gui.exit();
 			connectFrame.setVisible(true);
@@ -71,6 +81,8 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 			if (command.doConnect (name)) {
 				messages = new MessagesSession(name, this);
 				messages.open();
+				captures = new CaptureServer(this);
+				captures.start();
 				model.setName (name);
 				model.setConnected (true);
 				connectFrame.updateStatus(model.getName()+" est connecté.");
@@ -139,21 +151,24 @@ public class ApplicationAdmin implements NetworkListener, GUIListener, ControlLi
 
 
 	@Override
-	public void requestControl(Client client) {
+	public void requestControl(List<Client> clients) {
 		if (model.isConnected()) {
-			if (model.getControlFrame(client.getAddress())!=null)
+			for (Client client : clients)
 			{
-				updateInfo("Prise en main de "+client.getName()+" déjà en cours.");
-			}
-			else if (command.doControl(model.getName(), client.getAddress()))
-			{
-				model.getControlFrames().add(new ControlGUI(this, client));
-				model.getControlFrame(client.getAddress()).setVisible(true);
-				updateInfo("Prise en main de "+client.getName()+" réussie.");
-			}
-			else
-			{
-				updateInfo("Prise en main de "+client.getName()+" échouée.");
+				if (model.getControlFrame(client.getAddress())!=null)
+				{
+					updateInfo("Prise en main de "+client.getName()+" déjà en cours.");
+				}
+				else if (command.doControl(model.getName(), client.getAddress()))
+				{
+					model.getControlFrames().add(new ControlGUI(this, client));
+					model.getControlFrame(client.getAddress()).setVisible(true);
+					updateInfo("Prise en main de "+client.getName()+" réussie.");
+				}
+				else
+				{
+					updateInfo("Prise en main de "+client.getName()+" échouée.");
+				}
 			}
 		} 
 		else 

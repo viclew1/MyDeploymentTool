@@ -32,6 +32,7 @@ public class CommandWriter extends Writer{
 			writeString(clients.get(i).getName());
 			writeString(clients.get(i).getAddress());
 			writeBoolean(clients.get(i).isBusy());
+			writeBoolean(clients.get(i).isControlled());
 			writeBoolean(clients.get(i).isConnected());
 		}
 	}

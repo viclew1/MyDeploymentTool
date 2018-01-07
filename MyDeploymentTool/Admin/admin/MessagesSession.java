@@ -2,9 +2,6 @@ package admin;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-
-import admin.admindatas.Client;
 import common.Protocol;
 
 
@@ -63,9 +60,6 @@ public class MessagesSession extends Thread {
 			{
 			case Protocol.RP_INFO:
 				listener.updateInfo(reader.getInfo());
-				break;
-			case Protocol.RP_CONTROL:
-				listener.updateControl(reader.getClientAddr(),reader.getImg());
 				break;
 			case Protocol.RP_CLIENTS:
 				listener.updateClientsList(reader.getUsers(), true);

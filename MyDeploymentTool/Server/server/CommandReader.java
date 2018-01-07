@@ -1,6 +1,5 @@
 package server;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ public class CommandReader extends Reader{
 	private int x1,y1,x2,y2;
 	private boolean startResearch;
 	private List<String> files,dests;
-	private BufferedImage img;
 
 	public CommandReader(InputStream inputStream) {
 		super(inputStream);
@@ -62,10 +60,6 @@ public class CommandReader extends Reader{
 		case Protocol.RQ_CONTROL:
 			name=readString();
 			dest=readString();
-			break;
-		case Protocol.RP_CONTROL:
-			name=readString();
-			img=readBufferedImage();
 			break;
 		case Protocol.RQ_STOP_CONTROL:
 			name=readString();
@@ -119,10 +113,6 @@ public class CommandReader extends Reader{
 	
 	public String getDest(){
 		return dest;
-	}
-
-	public BufferedImage getImg() {
-		return img;
 	}
 
 }

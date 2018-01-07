@@ -3,6 +3,8 @@ package admin.admindatas;
 import java.util.ArrayList;
 import java.util.List;
 
+import admin.capture.ControlGUI;
+
 public class Model {
 
     private String name;

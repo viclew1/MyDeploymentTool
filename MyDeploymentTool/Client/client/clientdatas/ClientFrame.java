@@ -17,6 +17,7 @@ import common.Protocol;
  *
  * @author vicle
  */
+@SuppressWarnings("serial")
 public class ClientFrame extends javax.swing.JFrame {
 
 
